@@ -32,7 +32,7 @@ public class ObjectManager {
 	//Add to Lists:
 	public static void addClassroomToList(Classroom classroom) {
 		classrooms.add(classroom);
-		Schedule.Create(classroom.getName());
+		Schedule.Create(classroom.getWing() + "-" + classroom.getRoom());
 	} 
 
 	public static void addCourseToList(Course course) {

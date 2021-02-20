@@ -14,6 +14,7 @@ public class Class {
 	}
 	
 	public String Display() {
-		return "Course: " + this.course.getName() + "\nInstructor: " + this.instructor.getName() + "\nClassroom: " + this.classroom.getName();
+		return "oi!";
+				//"Course: " + this.course.getName() + "\nInstructor: " + this.instructor.getName() + "\nClassroom: " + this.classroom.getName();
 	}
 }

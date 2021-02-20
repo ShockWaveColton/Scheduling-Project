@@ -50,8 +50,10 @@ public class FileIO {
 						Connect(databaseName);
 						String sql;
 			        	sql = "CREATE TABLE Classrooms " +
-			                    "(Wing	  TEXT NOT NULL, " +
-			                    " RoomNum TEXT NOT NULL) ";
+			                    "(ClassRoomID INTEGER PRIMARY KEY AUTOINCREMENT," +
+			                    " Wing TEXT NOT NULL," +
+			                    " RoomNum TEXT NOT NULL," +
+			                    " LabType INTEGER NOT NULL)";
 			        	stmt.executeUpdate(sql);
 			    		conn.commit();
 			        	sql = "CREATE TABLE Courses " +
@@ -100,7 +102,8 @@ public class FileIO {
                 while ( query.next()) {
                 	String wing = query.getString("Wing"); 
                 	String number = query.getString("RoomNum");
-                	Classroom.Load(wing, number);
+                	int labType = query.getInt("LabType");
+                	Classroom.Read(wing, number, labType);
                 }
  	   	 		fileLoaded = true;
                 JOptionPane.showMessageDialog(null, "Loaded database file " + databaseName + " successfully!");
@@ -115,12 +118,12 @@ public class FileIO {
         }
 		return -1;
 	}
-	public static void Add(String table, String field1, String field2) {
+	public static void Add(String table, String field1, String field2, int field3) {
 		try {
 		Connect(databaseName);
 		String sql;
-    	sql = "INSERT INTO " + table + " (Wing, RoomNum)" +
-              " VALUES ('"+ field1 +"', '"+ field2 +"') ";
+    	sql = "INSERT INTO " + table + " (Wing, RoomNum, LabType)" +
+              " VALUES ('"+ field1 +"', '"+ field2 +"', '" + field3 + "') ";
     	stmt.executeUpdate(sql);
 		conn.commit();
 		Disconnect();
@@ -134,7 +137,7 @@ public class FileIO {
 			// FIX THIS! WING AND ROOMNUM ONLY WORK IN CLASSROOM, NOTHING ELSE!
 			String sql = "UPDATE " + table +
 					" SET Wing = '" + wing + "', RoomNum = '" + roomNum + "'" +
-					" WHERE RowID = '" + selectedIndex + "'";
+					" WHERE ClassRoomID = '" + selectedIndex + "'";
 	    	stmt.executeUpdate(sql);
 			conn.commit();
 			Disconnect();
@@ -143,11 +146,11 @@ public class FileIO {
 			JOptionPane.showMessageDialog(null, "Something went wrong.");
 		}
 	}
-	public static void Delete(String table, int rowID) {
+	public static void Delete(String table, int ID) {
 		try {
 			Connect(databaseName);
 			String sql = "DELETE from " + table +
-					"Where RowID = " + rowID +"'";
+					" WHERE ClassRoomID = '" + ID +"'";
 	    	stmt.executeUpdate(sql);
 			conn.commit();
 			Disconnect();

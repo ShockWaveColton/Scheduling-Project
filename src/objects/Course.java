@@ -12,16 +12,20 @@ import engine.ObjectManager;
 //use <course object name>.Add() to create a new classroom object and add that classroom to the arraylist.
 
 public class Course {
+	private String code;
 	private String name;
 
-	private Course(String name) {
+	private Course(String code, String name) {
+		this.code = code;
 		this.name = name;
 	}
-	public static void Add() {
-		String name = JOptionPane.showInputDialog("What is the course name?");
-		Course course = new Course(name);
+
+	public String getCode() { return this.code; }
+	public String getName() { return this.name; }
+
+	public static void Add(String code, String name) {
+		Course course = new Course(code, name);
 		ArrayList<Course> courses = ObjectManager.getCourses();
 		courses.add(course);
 	}
-	public String getName() { return this.name; }
 }
