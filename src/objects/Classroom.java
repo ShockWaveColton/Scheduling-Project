@@ -21,8 +21,7 @@ public class Classroom {
 	public static void Add(String wing, String number) {
 		FileIO.Add("Classrooms", wing, number);
 		//By this point the insertion was successful, and we add the new classroom to the arraylist for viewing.
-		String name = wing + "-" + number;
-		Classroom classroom = new Classroom(name);
+		Classroom classroom = new Classroom(wing + "-" + number);
 		ArrayList<Classroom> classrooms = ObjectManager.getClassrooms();
 		classrooms.add(classroom);
 	}
@@ -33,8 +32,17 @@ public class Classroom {
 		ArrayList<Classroom> classrooms = ObjectManager.getClassrooms();
 		classrooms.add(classroom);		
 	}
+	
+	// Updates database with appended classroom information, then updates the classroom Arraylist.
 	public static void Update(int selectedIndex, String wing, String roomNum) {
-		FileIO.Update(selectedIndex,wing,roomNum);
+		FileIO.Update("Classrooms", selectedIndex, wing, roomNum);
+		// The update is successful, and we can replace the classroom in the arraylist.
+		Classroom classroom = new Classroom(wing + "-" + roomNum);
+		ArrayList<Classroom> classrooms = ObjectManager.getClassrooms();
+		classrooms.set(selectedIndex -1, classroom);
+	}
+	public static void Delete(int selectedIndex) {
+		
 	}
 
 	public String getName() { return this.name; }

@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 import objects.Classroom; 
 
 public class FileIO {
-	private static String databaseName;
+	private static String databaseName = "";
 	private static boolean fileLoaded; 
 	private static Connection conn; 
 	private static Statement stmt; 
@@ -36,51 +36,58 @@ public class FileIO {
 			e.printStackTrace();
 		} 
 	}
-	public static void New() {
+	public static int New() {
 		databaseName = JOptionPane.showInputDialog("What is the name of the new database file?");
 		databaseName += ".db";
-   	 	File testFile = new File (databaseName);
-   	 	if(testFile.exists()) {
-   	 		JOptionPane.showMessageDialog(null, "File '" + databaseName + "' already exists. Select another name.");
- 		} else {
- 			try {
- 				Connect(databaseName);
-				String sql;
-	        	sql = "CREATE TABLE Classrooms " +
-	                    "(Wing	  TEXT NOT NULL, " +
-	                    " RoomNum TEXT NOT NULL) ";
-	        	stmt.executeUpdate(sql);
-	    		conn.commit();
-	        	sql = "CREATE TABLE Courses " +
-	                    "(Name    TEXT NOT NULL," +
-	                    " Code    TEXT NOT NULL UNIQUE)";
-	        	stmt.executeUpdate(sql); 
-	    		conn.commit(); 
-	        	sql = "CREATE TABLE Instructors " + 
-	                    "(W_Number  TEXT NOT NULL UNIQUE, " +  
-	                    " FirstName TEXT NOT NULL, " +  
-	                    " LastName  TEXT NOT NULL, " +  
-	                    " E_Mail    TEXT NOT NULL UNIQUE)";
-	        	stmt.executeUpdate(sql); 
-	    		conn.commit(); 
-	        	sql = "CREATE TABLE Programs " + 
-	                    "(Name	   TEXT NOT NULL UNIQUE, " +  
-	                    " Semester TEXT NOT NULL) ";  
-	        	stmt.executeUpdate(sql); 
-	    		conn.commit(); 
-	    		Disconnect();
-			} catch (ClassNotFoundException | SQLException e) {
-				e.printStackTrace();
-			}
- 			if(testFile.exists()) {
- 	   	 		JOptionPane.showMessageDialog(null, "Database file '" + databaseName + "' created successfully.");
- 	   	 		fileLoaded = true;
- 			}else {
- 				JOptionPane.showMessageDialog(null, "Something went wrong. Try again.");
-	    	 }
-    	 }
+		if (databaseName.equals("null.db")) {
+			JOptionPane.showMessageDialog(null, "Create new database cancelled.");
+		} else {
+	   	 	File testFile = new File (databaseName);
+	   	 	if(testFile.exists()) {
+	   	 		JOptionPane.showMessageDialog(null, "File '" + databaseName + "' already exists. Select another name.");
+	 		} else {
+					try {
+						Connect(databaseName);
+						String sql;
+			        	sql = "CREATE TABLE Classrooms " +
+			                    "(Wing	  TEXT NOT NULL, " +
+			                    " RoomNum TEXT NOT NULL) ";
+			        	stmt.executeUpdate(sql);
+			    		conn.commit();
+			        	sql = "CREATE TABLE Courses " +
+			                    "(Name    TEXT NOT NULL," +
+			                    " Code    TEXT NOT NULL UNIQUE)";
+			        	stmt.executeUpdate(sql); 
+			    		conn.commit(); 
+			        	sql = "CREATE TABLE Instructors " + 
+			                    "(W_Number  TEXT NOT NULL UNIQUE, " +  
+			                    " FirstName TEXT NOT NULL, " +  
+			                    " LastName  TEXT NOT NULL, " +  
+			                    " E_Mail    TEXT NOT NULL UNIQUE)";
+			        	stmt.executeUpdate(sql); 
+			    		conn.commit(); 
+			        	sql = "CREATE TABLE Programs " + 
+			                    "(Name	   TEXT NOT NULL UNIQUE, " +  
+			                    " Semester TEXT NOT NULL) ";  
+			        	stmt.executeUpdate(sql); 
+			    		conn.commit(); 
+			    		Disconnect();
+					} catch (ClassNotFoundException | SQLException e) {
+						e.printStackTrace();
+					}
+					if(testFile.exists()) {
+			   	 		JOptionPane.showMessageDialog(null, "Database file '" + databaseName + "' created successfully.");
+			   	 		fileLoaded = true;
+			   	 		return 0;
+					}else {
+					JOptionPane.showMessageDialog(null, "Something went wrong. Try again.");
+					return -1;
+				}
+ 			}
+		}
+		return -1;
     }
-	public static void Load() {
+	public static int Load() {
     	final JFileChooser fileChooser = new JFileChooser(".\\");
     	int selectFile = fileChooser.showOpenDialog(null);
     	if (selectFile == JFileChooser.APPROVE_OPTION) {
@@ -89,15 +96,16 @@ public class FileIO {
             try {
                 Connect(file.toString());
                 ResultSet query;
-                query = stmt.executeQuery("SELECT * FROM Classrooms ORDER BY Wing, RoomNum");
+                query = stmt.executeQuery("SELECT * FROM Classrooms");
                 while ( query.next()) {
                 	String wing = query.getString("Wing"); 
                 	String number = query.getString("RoomNum");
                 	Classroom.Load(wing, number);
                 }
  	   	 		fileLoaded = true;
-                System.out.println("Loaded database file " + databaseName + " successfully!");
+                JOptionPane.showMessageDialog(null, "Loaded database file " + databaseName + " successfully!");
                 Disconnect();
+                return 0;
             } catch (Exception e) {
             	e.printStackTrace();
             	JOptionPane.showMessageDialog(null, "Something went wrong.");
@@ -105,6 +113,7 @@ public class FileIO {
         } else {
         	JOptionPane.showMessageDialog(null, "Load file failed. Try again.");
         }
+		return -1;
 	}
 	public static void Add(String table, String field1, String field2) {
 		try {
@@ -119,10 +128,28 @@ public class FileIO {
 			e.printStackTrace();
 		}
 	}
-	public static void Update(int selectedIndex, String wing, String roomNum) {
+	public static void Update(String table, int selectedIndex, String wing, String roomNum) {
 		try {
 			Connect(databaseName);
-			String sql;
+			// FIX THIS! WING AND ROOMNUM ONLY WORK IN CLASSROOM, NOTHING ELSE!
+			String sql = "UPDATE " + table +
+					" SET Wing = '" + wing + "', RoomNum = '" + roomNum + "'" +
+					" WHERE RowID = '" + selectedIndex + "'";
+	    	stmt.executeUpdate(sql);
+			conn.commit();
+			Disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Something went wrong.");
+		}
+	}
+	public static void Delete(String table, int rowID) {
+		try {
+			Connect(databaseName);
+			String sql = "DELETE from " + table +
+					"Where RowID = " + rowID +"'";
+	    	stmt.executeUpdate(sql);
+			conn.commit();
 			Disconnect();
 		} catch (Exception e) {
 			e.printStackTrace();

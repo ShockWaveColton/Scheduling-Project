@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -31,9 +32,9 @@ public class Window {
 //	private ObjectManager objectManager;
 	private static JPanel panel;
 	
-	private static JComboBox<String> listInstructors;
-	private static JComboBox<String> listClassrooms;
+	private static DefaultComboBoxModel<String> classroomsModel = new DefaultComboBoxModel<>();
 	private static JComboBox<String> listCourses;
+	private static JComboBox<String> listInstructors;
 	private static JComboBox<String> listPrograms;
 	
 	private static JLabel lastClickedTop = new JLabel();
@@ -60,8 +61,10 @@ public class Window {
 		file_new.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent arg0) {
-		    	FileIO.New();
-		    	menuBar_Edit.setEnabled(true);
+		    	if (FileIO.New() == 0) 
+		    		menuBar_Edit.setEnabled(true);
+		    	else
+		    		menuBar_Edit.setEnabled(false);
 	    	}
 	    });
 		menuBar_File.add(file_new);
@@ -69,8 +72,12 @@ public class Window {
 		file_load.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent arg0) {
-		    	FileIO.Load();
-		    	menuBar_Edit.setEnabled(true);
+		    	if (FileIO.Load() == 0) {
+		    		menuBar_Edit.setEnabled(true);
+		    		reloadDropDowns();
+		    	}
+		    	else
+		    		menuBar_Edit.setEnabled(false);
 	    	}
 	    });
 		menuBar_File.add(file_load);
@@ -152,22 +159,12 @@ public class Window {
 		menuBar.add(menuBar_Help);
 		menuBar.setBounds(0, 0, window.getWidth(), 25);
 		panel.add(menuBar);
-		
-		listClassrooms = new JComboBox<>();
+		JComboBox<String> listClassrooms = new JComboBox<String>(classroomsModel);
 		listClassrooms.setBounds(10, 35, 140, 25);
-		ArrayList<Classroom> classrooms = ObjectManager.getClassrooms();
-		for (int i = 0; i < classrooms.size(); i++) {
-			listClassrooms.addItem(classrooms.get(i).getName());
-			System.out.println(classrooms.get(i).getName());
-		}
-		if (listClassrooms.getItemCount() == 0)
-			listClassrooms.setVisible(false);
-		else
-			listClassrooms.setVisible(true);			
-		listClassrooms.addActionListener(new ActionListener() {			
+		listClassrooms.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Schedule.Display(listClassrooms.getSelectedItem().toString());
+				//Schedule.Display(listClassrooms.getSelectedItem().toString());
 			}
 		});
 		panel.add(listClassrooms);
@@ -457,13 +454,15 @@ public class Window {
 		classroom_wing.setBounds(60, 45, 100, 20);
 		JTextArea classroom_number = new JTextArea();
 		classroom_number.setBounds(60, 75, 100, 20);
-		listClassrooms = new JComboBox<>();
+		
+//		Classroom[] classrooms = new Classroom[ObjectManager.getClassrooms().size()];
+//		classrooms = ObjectManager.getClassrooms().toArray(classrooms);
+//		String[] classroomNames = new String[ObjectManager.getClassrooms().size()];
+//		for (int i = 0; i < classroomNames.length; i++) {
+//			classroomNames[i] = classrooms[i].getName();
+//		}
+		JComboBox<String> listClassrooms = new JComboBox<>(classroomsModel);
 		listClassrooms.setBounds(105, 05, 100, 25);
-		ArrayList<Classroom> classrooms = ObjectManager.getClassrooms();
-		for (int i = 0; i < classrooms.size(); i++) {
-			listClassrooms.addItem(classrooms.get(i).getName());
-			System.out.println(classrooms.get(i).getName());
-		}
 		if (listClassrooms.getItemCount() == 0)
 			listClassrooms.setVisible(false);
 		else
@@ -471,7 +470,8 @@ public class Window {
 		listClassrooms.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Schedule.Display(listClassrooms.getSelectedItem().toString());
+				if (listClassrooms.getSelectedIndex() >= 0)
+					Schedule.Display(listClassrooms.getSelectedItem().toString());
 			}
 		});
 		JButton classroomAdd = new JButton("Add");
@@ -485,7 +485,7 @@ public class Window {
 					listClassrooms.addItem(classrooms.get(classrooms.size()-1).getName());
 					if (listClassrooms.getItemCount() > 1)
 						listClassrooms.setSelectedIndex(classrooms.size()-1);
-					listClassrooms.setVisible(true);					
+					listClassrooms.setVisible(true);
 				} else {
 					JOptionPane.showMessageDialog(null, "You must fill in Wing and Number.");
 				}
@@ -498,14 +498,23 @@ public class Window {
 			public void actionPerformed(ActionEvent e) {
 				if (!classroom_number.getText().equals("") && !classroom_wing.getText().equals("")) {
 					if (!(listClassrooms.getSelectedIndex() == -1)) {
-						Classroom.Update(listClassrooms.getSelectedIndex(), classroom_wing.getText(), classroom_number.getText());
 						ArrayList<Classroom> classrooms = ObjectManager.getClassrooms();
-						listClassrooms.addItem(classrooms.get(classrooms.size()-1).getName());
-						if (listClassrooms.getItemCount() > 1)
-							listClassrooms.setSelectedIndex(classrooms.size()-1);
-						listClassrooms.setVisible(true);											
+						String userValues = classroom_wing.getText() + "-" + classroom_number.getText();
+						for (int i = 0; i < classrooms.size(); i++) {
+							if (userValues.equals(classrooms.get(i).getName())) {
+								JOptionPane.showMessageDialog(null, "Classroom is already in database!");
+								return;
+							}
+						}
+						Classroom.Update(listClassrooms.getSelectedIndex() + 1, classroom_wing.getText(), classroom_number.getText());
+						int classroomIndex = listClassrooms.getSelectedIndex();
+						listClassrooms.setSelectedIndex(-1);
+						classroomsModel.removeAllElements();
+						for (int j = 0; j < classrooms.size(); j++)
+							classroomsModel.addElement(classrooms.get(j).getName());
+						listClassrooms.setSelectedIndex(classroomIndex);
 					} else {
-						JOptionPane.showMessageDialog(null, "You must select a classroom above to update");
+						JOptionPane.showMessageDialog(null, "You must select a classroom above to update.");
 					}
 				} else {
 					JOptionPane.showMessageDialog(null, "You must fill in Wing and Number.");
@@ -530,5 +539,11 @@ public class Window {
 	}
 	private void ManagePrograms(){
 		
+	}
+	private void reloadDropDowns(){
+		ArrayList<Classroom> classrooms = ObjectManager.getClassrooms();
+		classroomsModel.removeAllElements();
+		for (int i = 0; i < classrooms.size(); i++)
+			classroomsModel.addElement(classrooms.get(i).getName());
 	}
 }
