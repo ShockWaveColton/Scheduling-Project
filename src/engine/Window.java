@@ -21,7 +21,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextArea;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 import objects.Classroom;
@@ -175,45 +176,45 @@ public class Window {
 		menuBar.setBounds(0, 0, window.getWidth(), 25);
 		panel.add(menuBar);
 		
-		JComboBox<String> listClassrooms = new JComboBox<String>(classroomsModel);
-		listClassrooms.setBounds(10, 35, 140, 25);
-		listClassrooms.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Schedule.Display(listClassrooms.getSelectedItem().toString());
-			}
-		});
-		panel.add(listClassrooms);
-		
-		JComboBox<String> listCourses = new JComboBox<String>(coursesModel);
-		listCourses.setBounds(165, 35, 140, 25);
-		listCourses.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Schedule.Display(listCourses.getSelectedItem().toString());
-			}
-		});
-		panel.add(listCourses);
-
-		JComboBox<String> listInstructors = new JComboBox<String>(coursesModel);
-		listInstructors.setBounds(320, 35, 140, 25);
-		listInstructors.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Schedule.Display(listInstructors.getSelectedItem().toString());
-			}
-		});
-		panel.add(listInstructors);
-
-		JComboBox<String> listPrograms = new JComboBox<String>(coursesModel);
-		listPrograms.setBounds(475, 35, 140, 25);
-		listPrograms.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Schedule.Display(listPrograms.getSelectedItem().toString());
-			}
-		});
-		panel.add(listPrograms);
+//		JComboBox<String> listClassrooms = new JComboBox<String>(classroomsModel);
+//		listClassrooms.setBounds(10, 35, 140, 25);
+//		listClassrooms.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				Schedule.Display(listClassrooms.getSelectedItem().toString());
+//			}
+//		});
+//		panel.add(listClassrooms);
+//		
+//		JComboBox<String> listCourses = new JComboBox<String>(coursesModel);
+//		listCourses.setBounds(165, 35, 140, 25);
+//		listCourses.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				Schedule.Display(listCourses.getSelectedItem().toString());
+//			}
+//		});
+//		panel.add(listCourses);
+//
+//		JComboBox<String> listInstructors = new JComboBox<String>(coursesModel);
+//		listInstructors.setBounds(320, 35, 140, 25);
+//		listInstructors.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				Schedule.Display(listInstructors.getSelectedItem().toString());
+//			}
+//		});
+//		panel.add(listInstructors);
+//
+//		JComboBox<String> listPrograms = new JComboBox<String>(coursesModel);
+//		listPrograms.setBounds(475, 35, 140, 25);
+//		listPrograms.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				Schedule.Display(listPrograms.getSelectedItem().toString());
+//			}
+//		});
+//		panel.add(listPrograms);
 
 		
 		panel.setVisible(true);
@@ -416,9 +417,9 @@ public class Window {
 		classroomWingLabel.setBounds(10, 40, 100, 30);
 		JLabel classroomNumberLabel = new JLabel("Room Number:");
 		classroomNumberLabel.setBounds(10, 70, 100, 30);
-		JTextArea classroom_wing = new JTextArea();
+		JTextField classroom_wing = new JTextField();
 		classroom_wing.setBounds(100, 45, 100, 20);
-		JTextArea classroom_number = new JTextArea();
+		JTextField classroom_number = new JTextField();
 		classroom_number.setBounds(100, 75, 100, 20);
 		JRadioButton noLab = new JRadioButton("Not a Lab");
 		noLab.setSelected(true);
@@ -551,50 +552,84 @@ public class Window {
 		JFrame courseManager = new JFrame("Course Manager");
 		courseManager.setMinimumSize(new Dimension());
 		courseManager.setVisible(true);
-		courseManager.setBounds(0, 0,250, 280);
+		courseManager.setBounds(0, 0,250, 390);
 		courseManager.setLocationRelativeTo(null);
+
 		JPanel coursePanel = new JPanel();
 		coursePanel.setLayout(null);
 		coursePanel.setPreferredSize(new Dimension(300, 300));
+
 		JLabel courseListLabel = new JLabel("Courses:");
-		courseListLabel.setBounds(10, 05, 100, 30);
 		JLabel courseCodeLabel = new JLabel("Course Code:");
-		courseCodeLabel.setBounds(10, 40, 100, 30);
 		JLabel courseNameLabel = new JLabel("Course Name:");
-		courseNameLabel.setBounds(10, 70, 100, 30);
-		JTextArea courseCode = new JTextArea();
-		courseCode.setBounds(100, 45, 100, 20);
-		JTextArea courseName = new JTextArea();
-		courseName.setBounds(100, 75, 100, 20);
+		JLabel courseHoursLabel = new JLabel("Course Hours:");
+		JLabel courseProgramLabel = new JLabel("Program:");
+		JLabel courseTermLabel = new JLabel("Term:");
+		JLabel courseSectionsLabel = new JLabel("Sections:");
+		JLabel courseInstructorLabel = new JLabel("Instructor:");
+		courseListLabel.setBounds(10, 10, 100, 20);
+		courseCodeLabel.setBounds(10, 30, 100, 20);
+		courseNameLabel.setBounds(10, 50, 100, 20);
+		courseHoursLabel.setBounds(10, 70, 100, 20);
+		courseSectionsLabel.setBounds(10, 90, 100, 20);
+		courseInstructorLabel.setBounds(10, 110, 100, 20);
+		courseProgramLabel.setBounds(10, 130, 100, 20);
+		courseTermLabel.setBounds   (10, 150, 100, 20);
+
+		JTextField courseCode = new JTextField();
+		JTextField courseName = new JTextField();
+		JTextField courseHours = new JTextField();
+		JTextField courseSections = new JTextField();
+		JComboBox<String> courseInstructor = new JComboBox<String>(instructorsModel);
+		JComboBox<String> courseProgram = new JComboBox<String>(programsModel);
+		JSlider courseTerm = new JSlider();
+		courseCode.setBounds(100, 30, 140, 20);
+		courseName.setBounds(100, 50, 140, 20);
+		courseHours.setBounds(100, 70, 140, 20);
+		courseSections.setBounds(100, 90, 140, 20);
+		courseInstructor.setBounds(100, 110, 140, 20);
+		courseProgram.setBounds(100, 130, 140, 20);
+		courseTerm.setBounds   (100, 150, 140, 50);
+		courseTerm.setMinimum(1);
+		courseTerm.setMaximum(4);
+		courseTerm.setMajorTickSpacing(1);
+		courseTerm.setPaintTicks(true);
+		courseTerm.setPaintLabels(true);
+
 		JRadioButton noLab = new JRadioButton("No Lab required");
-		noLab.setSelected(true);
-		noLab.setBounds(10, 100, 150, 20);
 		JRadioButton macLab = new JRadioButton("Requires Mac Lab");
-		macLab.setBounds(10, 120, 150, 20);
 		JRadioButton netLab = new JRadioButton("Requires Networking Lab");
-		netLab.setBounds(10, 140, 150, 20);
 		JRadioButton winLab = new JRadioButton("Requires Windows Lab");
-		winLab.setBounds(10, 160, 150, 20);
+		noLab.setSelected(true);
+		noLab.setBounds(10, 200, 180, 20);
+		macLab.setBounds(10, 220, 180, 20);
+		netLab.setBounds(10, 240, 180, 20);
+		winLab.setBounds(10, 260, 180, 20);
+
 		ButtonGroup radioGroup = new ButtonGroup();
 		radioGroup.add(noLab);
 		radioGroup.add(macLab);
 		radioGroup.add(netLab);
 		radioGroup.add(winLab);
 
-		JComboBox<String> listCourses = new JComboBox<>(coursesModel);
-		listCourses.setBounds(105, 05, 125, 25);
-		if (listCourses.getItemCount() == 0)
-			listCourses.setVisible(false);
-		else
-			listCourses.setVisible(true);			
-		listCourses.addActionListener(new ActionListener() {			
+		JComboBox<String> courseList = new JComboBox<>(coursesModel);
+		courseList.setBounds(100, 10, 140, 20);
+		if (courseList.getItemCount() == 0) {
+			courseListLabel.setVisible(false);
+			courseList.setVisible(false);
+		} else {
+			courseListLabel.setVisible(true);
+			courseList.setVisible(true);
+		}
+						
+		courseList.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (listCourses.getSelectedIndex() >= 0) {
-					Schedule.Display(listCourses.getSelectedItem().toString());
-					courseCode.setText(ObjectManager.getCourses().get(listCourses.getSelectedIndex()).getCode()); 
-					courseName.setText(ObjectManager.getCourses().get(listCourses.getSelectedIndex()).getName());
-					switch (ObjectManager.getClassrooms().get(listCourses.getSelectedIndex()).getLab()) {
+				if (courseList.getSelectedIndex() >= 0) {
+					Schedule.Display(courseList.getSelectedItem().toString());
+					courseCode.setText(ObjectManager.getCourses().get(courseList.getSelectedIndex()).getCode()); 
+					courseName.setText(ObjectManager.getCourses().get(courseList.getSelectedIndex()).getName());
+					switch (ObjectManager.getClassrooms().get(courseList.getSelectedIndex()).getLab()) {
 					case 0: 
 						noLab.setSelected(true);
 						break;
@@ -608,14 +643,14 @@ public class Window {
 						winLab.setSelected(true);
 						break;
 					default:
-						throw new IllegalArgumentException("Unexpected value: " + ObjectManager.getClassrooms().get(listCourses.getSelectedIndex()).getLab());
+						throw new IllegalArgumentException("Unexpected value: " + ObjectManager.getClassrooms().get(courseList.getSelectedIndex()).getLab());
 					}
 
 				}
 			}
 		});
 		JButton courseAdd = new JButton("Add");
-		courseAdd.setBounds(10, 185, 225, 25);
+		courseAdd.setBounds(10, 290, 225, 25);
 		courseAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -629,19 +664,18 @@ public class Window {
 						}
 					}
 					int labType = getLabType(noLab, macLab, netLab, winLab);
-					Course.Create(courseCode.getText(), courseName.getText(), courseHours.getText(), courseProgram.getText(), courseSection.getText(), courseInstructor.getSelectedIndex());
-					String classroomName = classroom_wing.getText() + "-" + classroom_number.getText();
-					listClassrooms.addItem(classroomName);
-					if (listClassrooms.getItemCount() > 1)
-						listClassrooms.setSelectedIndex(classrooms.size()-1);
-					listClassrooms.setVisible(true);
-				} else {
+//					Course.Create(courseCode.getText(), courseName.getText(), courseHours.getText(), courseProgram.getText(), courseSection.getText(), courseInstructor.getSelectedIndex());
+//					listClassrooms.addItem(classroomName);
+//					if (listClassrooms.getItemCount() > 1)
+//						listClassrooms.setSelectedIndex(classrooms.size()-1);
+//					listClassrooms.setVisible(true);
+//				} else {
 					JOptionPane.showMessageDialog(null, "You must fill in Wing and Number.");
 				}
 			}
 		});
-//		JButton classroomUpdate = new JButton("Update");
-//		classroomUpdate.setBounds(10, 215, 120, 25);
+		JButton courseUpdate = new JButton("Update");
+		courseUpdate.setBounds(10, 320, 120, 25);
 //		classroomUpdate.addActionListener(new ActionListener() {
 //			@Override
 //			public void actionPerformed(ActionEvent e) {
@@ -667,8 +701,8 @@ public class Window {
 //				}
 //			}
 //		});
-//		JButton classroomDelete = new JButton("Delete");
-//		classroomDelete.setBounds(115, 215, 120, 25);
+		JButton courseDelete = new JButton("Delete");
+		courseDelete.setBounds(115, 320, 120, 25);
 //		classroomDelete.addActionListener(new ActionListener() {
 //			@Override
 //			public void actionPerformed(ActionEvent e) {
@@ -677,20 +711,30 @@ public class Window {
 //				listClassrooms.setSelectedIndex(-1);
 //			}
 //		});
-//		coursePanel.add(classroomListLabel);
-//		classroomPanel.add(classroomWingLabel);
-//		classroomPanel.add(classroomNumberLabel);
-//		classroomPanel.add(listClassrooms);
-//		classroomPanel.add(classroom_wing);
-//		classroomPanel.add(classroom_number);
-//		classroomPanel.add(noLab);
-//		classroomPanel.add(macLab);
-//		classroomPanel.add(netLab);
-//		classroomPanel.add(winLab);
-//		classroomPanel.add(classroomAdd);
-//		classroomPanel.add(classroomUpdate);
-//		classroomPanel.add(classroomDelete);
-//		classroomManager.add(classroomPanel);
+		coursePanel.add(courseListLabel);
+		coursePanel.add(courseCodeLabel);
+		coursePanel.add(courseNameLabel);
+		coursePanel.add(courseHoursLabel);
+		coursePanel.add(courseProgramLabel);
+		coursePanel.add(courseTermLabel);
+		coursePanel.add(courseSectionsLabel);
+		coursePanel.add(courseInstructorLabel);
+		coursePanel.add(courseList);
+		coursePanel.add(courseCode);
+		coursePanel.add(courseName);
+		coursePanel.add(courseHours);
+		coursePanel.add(courseProgram);
+		coursePanel.add(courseTerm);
+		coursePanel.add(courseSections);
+		coursePanel.add(courseInstructor);
+		coursePanel.add(noLab);
+		coursePanel.add(macLab);
+		coursePanel.add(netLab);
+		coursePanel.add(winLab);
+		coursePanel.add(courseAdd);
+		coursePanel.add(courseUpdate);
+		coursePanel.add(courseDelete);
+		courseManager.add(coursePanel);
 	}
 	private void ManageInstructors(){
 		
