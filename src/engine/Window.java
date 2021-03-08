@@ -65,7 +65,7 @@ public class Window {
 		file_new.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent arg0) {
-		    	if (FileIO.New() == 0) 
+		    	if (FileIO.NewDatabase() == 0) 
 		    		menuBar_Edit.setEnabled(true);
 		    	else
 		    		menuBar_Edit.setEnabled(false);
@@ -174,49 +174,69 @@ public class Window {
 		menuBar_Help.add(help_About);
 		menuBar.add(menuBar_Help);
 		menuBar.setBounds(0, 0, window.getWidth(), 25);
-		panel.add(menuBar);
 		
-//		JComboBox<String> listClassrooms = new JComboBox<String>(classroomsModel);
-//		listClassrooms.setBounds(10, 35, 140, 25);
-//		listClassrooms.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				Schedule.Display(listClassrooms.getSelectedItem().toString());
-//			}
-//		});
-//		panel.add(listClassrooms);
-//		
-//		JComboBox<String> listCourses = new JComboBox<String>(coursesModel);
-//		listCourses.setBounds(165, 35, 140, 25);
-//		listCourses.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				Schedule.Display(listCourses.getSelectedItem().toString());
-//			}
-//		});
-//		panel.add(listCourses);
-//
-//		JComboBox<String> listInstructors = new JComboBox<String>(coursesModel);
-//		listInstructors.setBounds(320, 35, 140, 25);
-//		listInstructors.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				Schedule.Display(listInstructors.getSelectedItem().toString());
-//			}
-//		});
-//		panel.add(listInstructors);
-//
-//		JComboBox<String> listPrograms = new JComboBox<String>(coursesModel);
-//		listPrograms.setBounds(475, 35, 140, 25);
-//		listPrograms.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				Schedule.Display(listPrograms.getSelectedItem().toString());
-//			}
-//		});
-//		panel.add(listPrograms);
+		JLabel listProgramsLabel    = new JLabel("Programs:");
+		JLabel listInstructorsLabel = new JLabel("Instructors:");
+		JLabel listClassroomsLabel  = new JLabel("Classrooms:");
+		JLabel listCoursesLabel     = new JLabel("Courses:");
+		listProgramsLabel.setBounds   (10, 30, 100, 20);
+		listInstructorsLabel.setBounds(165, 30, 100, 20);
+		listClassroomsLabel.setBounds (320, 30, 100, 20);
+		listCoursesLabel.setBounds    (475, 30, 100, 20);
+		
+		JComboBox<String> listPrograms = new JComboBox<String>(programsModel);
+		listPrograms.setSelectedIndex(-1);
+		listPrograms.setBounds(10, 55, 140, 25);
+		listPrograms.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (listPrograms.getSelectedIndex() >= 0)
+					Schedule.Display(listPrograms.getSelectedItem().toString());
+			}
+		});
+		
+		JComboBox<String> listInstructors = new JComboBox<String>(instructorsModel);
+		listInstructors.setSelectedIndex(-1);
+		listInstructors.setBounds(165, 55, 140, 25);
+		listInstructors.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (listInstructors.getSelectedIndex() >= 0)
+					Schedule.Display(listInstructors.getSelectedItem().toString());
+			}
+		});
 
+		JComboBox<String> listClassrooms = new JComboBox<String>(classroomsModel);
+		listClassrooms.setSelectedIndex(-1);
+		listClassrooms.setBounds(320, 55, 140, 25);
+		listClassrooms.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (listClassrooms.getSelectedIndex() >= 0)
+					Schedule.Display(listClassrooms.getSelectedItem().toString());
+			}
+		});
 		
+		JComboBox<String> listCourses = new JComboBox<String>(coursesModel);
+		listCourses.setSelectedIndex(-1);
+		listCourses.setBounds(475, 55, 140, 25);
+		listCourses.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (listCourses.getSelectedIndex() >= 0)
+					Schedule.Display(listCourses.getSelectedItem().toString());
+			}
+		});
+
+		panel.add(menuBar);
+		panel.add(listClassroomsLabel);
+		panel.add(listInstructorsLabel);
+		panel.add(listCoursesLabel);
+		panel.add(listProgramsLabel);
+		panel.add(listClassrooms);
+		panel.add(listCourses);
+		panel.add(listInstructors);
+		panel.add(listPrograms);
 		panel.setVisible(true);
 		window.add(panel);
 		window.setVisible(true);
@@ -406,50 +426,52 @@ public class Window {
 		JFrame classroomManager = new JFrame("Classroom Manager");
 		classroomManager.setMinimumSize(new Dimension());
 		classroomManager.setVisible(true);
-		classroomManager.setBounds(0, 0,250, 280);
+		classroomManager.setBounds(0, 0, 260, 250);
 		classroomManager.setLocationRelativeTo(null);
+
 		JPanel classroomPanel = new JPanel();
 		classroomPanel.setLayout(null);
 		classroomPanel.setPreferredSize(new Dimension(300, 300));
+
 		JLabel classroomListLabel = new JLabel("Classrooms:");
-		classroomListLabel.setBounds(10, 05, 100, 30);
 		JLabel classroomWingLabel = new JLabel("Campus Wing:");
-		classroomWingLabel.setBounds(10, 40, 100, 30);
 		JLabel classroomNumberLabel = new JLabel("Room Number:");
-		classroomNumberLabel.setBounds(10, 70, 100, 30);
+		classroomListLabel.setBounds  (10,  0, 100, 30);
+		classroomWingLabel.setBounds  (10, 25, 100, 30);
+		classroomNumberLabel.setBounds(10, 45, 100, 30);
+
 		JTextField classroom_wing = new JTextField();
-		classroom_wing.setBounds(100, 45, 100, 20);
 		JTextField classroom_number = new JTextField();
-		classroom_number.setBounds(100, 75, 100, 20);
+		classroom_wing.setBounds(100, 30, 100, 20);
+		classroom_number.setBounds(100, 50, 100, 20);
+
 		JRadioButton noLab = new JRadioButton("Not a Lab");
-		noLab.setSelected(true);
-		noLab.setBounds(10, 100, 150, 20);
 		JRadioButton macLab = new JRadioButton("Mac Lab");
-		macLab.setBounds(10, 120, 150, 20);
 		JRadioButton netLab = new JRadioButton("Networking Lab");
-		netLab.setBounds(10, 140, 150, 20);
 		JRadioButton winLab = new JRadioButton("Windows Lab");
-		winLab.setBounds(10, 160, 150, 20);
+		noLab.setSelected(true);
+		noLab.setBounds(10, 70, 150, 20);
+		macLab.setBounds(10, 90, 150, 20);
+		netLab.setBounds(10, 110, 150, 20);
+		winLab.setBounds(10, 130, 150, 20);
+
 		ButtonGroup radioGroup = new ButtonGroup();
 		radioGroup.add(noLab);
 		radioGroup.add(macLab);
 		radioGroup.add(netLab);
 		radioGroup.add(winLab);
 
-		JComboBox<String> listClassrooms = new JComboBox<>(classroomsModel);
-		listClassrooms.setBounds(105, 05, 125, 25);
-		if (listClassrooms.getItemCount() == 0)
-			listClassrooms.setVisible(false);
-		else
-			listClassrooms.setVisible(true);			
-		listClassrooms.addActionListener(new ActionListener() {			
+		JComboBox<String> classroomList = new JComboBox<>(classroomsModel);
+		classroomList.setSelectedIndex(-1);
+		classroomList.setBounds(100, 5, 125, 20);
+		classroomList.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (listClassrooms.getSelectedIndex() >= 0) {
-					Schedule.Display(listClassrooms.getSelectedItem().toString());
-					classroom_wing.setText(ObjectManager.getClassrooms().get(listClassrooms.getSelectedIndex()).getWing()); 
-					classroom_number.setText(ObjectManager.getClassrooms().get(listClassrooms.getSelectedIndex()).getRoom());
-					switch (ObjectManager.getClassrooms().get(listClassrooms.getSelectedIndex()).getLab()) {
+				if (classroomList.getSelectedIndex() >= 0) {
+					Schedule.Display(classroomList.getSelectedItem().toString());
+					classroom_wing.setText(ObjectManager.getClassrooms().get(classroomList.getSelectedIndex()).getWing()); 
+					classroom_number.setText(ObjectManager.getClassrooms().get(classroomList.getSelectedIndex()).getRoom());
+					switch (ObjectManager.getClassrooms().get(classroomList.getSelectedIndex()).getLab()) {
 					case 0: 
 						noLab.setSelected(true);
 						break;
@@ -463,14 +485,14 @@ public class Window {
 						winLab.setSelected(true);
 						break;
 					default:
-						throw new IllegalArgumentException("Unexpected value: " + ObjectManager.getClassrooms().get(listClassrooms.getSelectedIndex()).getLab());
+						throw new IllegalArgumentException("Unexpected value: " + ObjectManager.getClassrooms().get(classroomList.getSelectedIndex()).getLab());
 					}
 
 				}
 			}
 		});
 		JButton classroomAdd = new JButton("Add");
-		classroomAdd.setBounds(10, 185, 225, 25);
+		classroomAdd.setBounds(10, 150, 225, 25);
 		classroomAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -487,56 +509,50 @@ public class Window {
 					int labType = getLabType(noLab, macLab, netLab, winLab);
 					Classroom.Create(classroom_wing.getText(), classroom_number.getText(), labType);
 					String classroomName = classroom_wing.getText() + "-" + classroom_number.getText();
-					listClassrooms.addItem(classroomName);
-					if (listClassrooms.getItemCount() > 1)
-						listClassrooms.setSelectedIndex(classrooms.size()-1);
-					listClassrooms.setVisible(true);
+					classroomList.addItem(classroomName);
+					if (classroomList.getItemCount() > 1)
+						classroomList.setSelectedIndex(classrooms.size()-1);
+					classroomList.setVisible(true);
 				} else {
 					JOptionPane.showMessageDialog(null, "You must fill in Wing and Number.");
 				}
 			}
 		});
 		JButton classroomUpdate = new JButton("Update");
-		classroomUpdate.setBounds(10, 215, 120, 25);
+		classroomUpdate.setBounds(10, 180, 110, 25);
 		classroomUpdate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (!classroom_number.getText().equals("") && !classroom_wing.getText().equals("")) {
-					if (!(listClassrooms.getSelectedIndex() == -1)) {
-						ArrayList<Classroom> classrooms = ObjectManager.getClassrooms();
-						String userValues = classroom_wing.getText() + "-" + classroom_number.getText();
-						for (int i = 0; i < classrooms.size(); i++) {
-							String classroomName = classrooms.get(i).getWing() +"-"+classrooms.get(i).getRoom();
-							if (userValues.equals(classroomName)) {
-								JOptionPane.showMessageDialog(null, "Classroom is already in database!");
-								return;
-							}
-						}
+					if (!(classroomList.getSelectedIndex() == -1)) {
 						int labType = getLabType(noLab, macLab, netLab, winLab);
-						Classroom.Update(listClassrooms.getSelectedIndex() + 1, classroom_wing.getText(), classroom_number.getText(), labType);
+						int ID = ObjectManager.getClassrooms().get(classroomList.getSelectedIndex()).getID();
+						Classroom.Update(classroomList.getSelectedIndex(), ID, classroom_wing.getText(), classroom_number.getText(), labType);
 						reloadDropDowns();
 					} else {
 						JOptionPane.showMessageDialog(null, "You must select a classroom above to update.");
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "You must fill in Wing and Number.");
+					JOptionPane.showMessageDialog(null, "You must fill in all empty fields.");
 				}
 			}
 		});
 		JButton classroomDelete = new JButton("Delete");
-		classroomDelete.setBounds(115, 215, 120, 25);
+		classroomDelete.setBounds(125, 180, 110, 25);
 		classroomDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Classroom.Delete(ObjectManager.getClassrooms().get(listClassrooms.getSelectedIndex()).getID());
+				int testNum = ObjectManager.getClassrooms().get(classroomList.getSelectedIndex()).getID();
+				System.out.println(testNum);
+				Classroom.Delete(ObjectManager.getClassrooms().get(classroomList.getSelectedIndex()).getID());
 				reloadDropDowns();
-				listClassrooms.setSelectedIndex(-1);
+				classroomList.setSelectedIndex(-1);
 			}
 		});
 		classroomPanel.add(classroomListLabel);
 		classroomPanel.add(classroomWingLabel);
 		classroomPanel.add(classroomNumberLabel);
-		classroomPanel.add(listClassrooms);
+		classroomPanel.add(classroomList);
 		classroomPanel.add(classroom_wing);
 		classroomPanel.add(classroom_number);
 		classroomPanel.add(noLab);
@@ -552,7 +568,7 @@ public class Window {
 		JFrame courseManager = new JFrame("Course Manager");
 		courseManager.setMinimumSize(new Dimension());
 		courseManager.setVisible(true);
-		courseManager.setBounds(0, 0,250, 390);
+		courseManager.setBounds(0, 0,265, 390);
 		courseManager.setLocationRelativeTo(null);
 
 		JPanel coursePanel = new JPanel();
@@ -567,7 +583,7 @@ public class Window {
 		JLabel courseTermLabel = new JLabel("Term:");
 		JLabel courseSectionsLabel = new JLabel("Sections:");
 		JLabel courseInstructorLabel = new JLabel("Instructor:");
-		courseListLabel.setBounds(10, 10, 100, 20);
+		courseListLabel.setBounds(10,  5, 100, 20);
 		courseCodeLabel.setBounds(10, 30, 100, 20);
 		courseNameLabel.setBounds(10, 50, 100, 20);
 		courseHoursLabel.setBounds(10, 70, 100, 20);
@@ -613,15 +629,8 @@ public class Window {
 		radioGroup.add(winLab);
 
 		JComboBox<String> courseList = new JComboBox<>(coursesModel);
-		courseList.setBounds(100, 10, 140, 20);
-		if (courseList.getItemCount() == 0) {
-			courseListLabel.setVisible(false);
-			courseList.setVisible(false);
-		} else {
-			courseListLabel.setVisible(true);
-			courseList.setVisible(true);
-		}
-						
+		courseList.setSelectedIndex(-1);
+		courseList.setBounds(100, 5, 140, 20);
 		courseList.addActionListener(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -645,7 +654,6 @@ public class Window {
 					default:
 						throw new IllegalArgumentException("Unexpected value: " + ObjectManager.getClassrooms().get(courseList.getSelectedIndex()).getLab());
 					}
-
 				}
 			}
 		});
@@ -654,7 +662,13 @@ public class Window {
 		courseAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (!courseCode.getText().equals("") && !courseName.getText().equals("")) {
+				if (!courseCode.getText().equals("") &&
+						!courseName.getText().equals("") &&
+						!courseHours.getText().equals("") &&
+						!courseSections.getText().equals("") &&
+						courseInstructor.getSelectedIndex() != -1 &&
+						courseProgram.getSelectedIndex() != -1
+					){
 					ArrayList<Course> courses = ObjectManager.getCourses();
 					String userValues = courseCode.getText() + "-" + courseName.getText();
 					for (int i = 0; i < courses.size(); i++) {
@@ -663,54 +677,61 @@ public class Window {
 							return;
 						}
 					}
-					int labType = getLabType(noLab, macLab, netLab, winLab);
-//					Course.Create(courseCode.getText(), courseName.getText(), courseHours.getText(), courseProgram.getText(), courseSection.getText(), courseInstructor.getSelectedIndex());
-//					listClassrooms.addItem(classroomName);
-//					if (listClassrooms.getItemCount() > 1)
-//						listClassrooms.setSelectedIndex(classrooms.size()-1);
-//					listClassrooms.setVisible(true);
-//				} else {
-					JOptionPane.showMessageDialog(null, "You must fill in Wing and Number.");
+					int int_courseHours = Integer.parseInt(courseHours.getText());
+					int int_labType = getLabType(noLab, macLab, netLab, winLab);
+					Course.Create(courseCode.getText(), courseName.getText(), int_courseHours, int_labType, courseProgram.getSelectedItem().toString(), Integer.parseInt(courseSections.getText()), courseInstructor.getSelectedItem().toString());
+					courseList.addItem(courseName.getText());
+					if (courseList.getItemCount() > 1)
+						courseList.setSelectedIndex(courses.size()-1);
+					courseList.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "You must fill in all empty fields.");
 				}
 			}
 		});
 		JButton courseUpdate = new JButton("Update");
-		courseUpdate.setBounds(10, 320, 120, 25);
-//		classroomUpdate.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				if (!classroom_number.getText().equals("") && !classroom_wing.getText().equals("")) {
-//					if (!(listClassrooms.getSelectedIndex() == -1)) {
-//						ArrayList<Classroom> classrooms = ObjectManager.getClassrooms();
-//						String userValues = classroom_wing.getText() + "-" + classroom_number.getText();
-//						for (int i = 0; i < classrooms.size(); i++) {
-//							String classroomName = classrooms.get(i).getWing() +"-"+classrooms.get(i).getRoom();
-//							if (userValues.equals(classroomName)) {
-//								JOptionPane.showMessageDialog(null, "Classroom is already in database!");
-//								return;
-//							}
-//						}
-//						int labType = getLabType(noLab, macLab, netLab, winLab);
-//						Classroom.Update(listClassrooms.getSelectedIndex() + 1, classroom_wing.getText(), classroom_number.getText(), labType);
-//						reloadDropDowns();
-//					} else {
-//						JOptionPane.showMessageDialog(null, "You must select a classroom above to update.");
-//					}
-//				} else {
-//					JOptionPane.showMessageDialog(null, "You must fill in Wing and Number.");
-//				}
-//			}
-//		});
+		courseUpdate.setBounds(10, 320, 110, 25);
+		courseUpdate.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!courseCode.getText().equals("") &&
+						!courseName.getText().equals("") &&
+						!courseHours.getText().equals("") &&
+						!courseSections.getText().equals("") &&
+						courseInstructor.getSelectedIndex() != -1 &&
+						courseProgram.getSelectedIndex() != -1
+					){
+					if (!(courseList.getSelectedIndex() == -1)) {
+						int int_labType = getLabType(noLab, macLab, netLab, winLab);
+						Course.Update(
+								courseList.getSelectedIndex(),
+								courseCode.getText(),
+								courseName.getText(),
+								Integer.parseInt(courseHours.getText()),
+								int_labType,
+								courseProgram.getSelectedItem().toString(),
+								Integer.parseInt(courseSections.getText()),
+								courseInstructor.getSelectedItem().toString()
+								);
+						reloadDropDowns();
+					} else {
+						JOptionPane.showMessageDialog(null, "You must select a classroom above to update.");
+					}
+				} else {
+					JOptionPane.showMessageDialog(null, "You must fill in all empty fields.");
+				}
+			}
+		});
 		JButton courseDelete = new JButton("Delete");
-		courseDelete.setBounds(115, 320, 120, 25);
-//		classroomDelete.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				Classroom.Delete(ObjectManager.getClassrooms().get(listClassrooms.getSelectedIndex()).getID());
-//				reloadDropDowns();
-//				listClassrooms.setSelectedIndex(-1);
-//			}
-//		});
+		courseDelete.setBounds(125, 320, 110, 25);
+		courseDelete.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Course.Delete(ObjectManager.getCourses().get(courseList.getSelectedIndex()).getID());
+				reloadDropDowns();
+				courseList.setSelectedIndex(-1);
+			}
+		});
 		coursePanel.add(courseListLabel);
 		coursePanel.add(courseCodeLabel);
 		coursePanel.add(courseNameLabel);
@@ -737,7 +758,147 @@ public class Window {
 		courseManager.add(coursePanel);
 	}
 	private void ManageInstructors(){
+		JFrame instructorManager = new JFrame("Instructor Manager");
+		instructorManager.setMinimumSize(new Dimension());
+		instructorManager.setVisible(true);
+		instructorManager.setBounds(0, 0, 230, 235);
+		instructorManager.setLocationRelativeTo(null);
 		
+		JPanel instructorPanel = new JPanel();
+		instructorPanel.setLayout(null);
+		instructorPanel.setPreferredSize(new Dimension(300, 300));
+		
+		JLabel instructorListLabel = new JLabel("Instructors:");
+		JLabel instructorWnumberLabel = new JLabel("ID (W#):");
+		JLabel instructorFirstnameLabel = new JLabel("First Name:");
+		JLabel instructorLastnameLabel = new JLabel("Last Name:");
+		JLabel instructorEmailLabel = new JLabel("E-mail:");
+		JLabel instructorPhoneLabel = new JLabel("Phone:");
+		instructorListLabel.setBounds     (10,   5, 100, 20);
+		instructorWnumberLabel.setBounds  (10,  30, 100, 20);
+		instructorFirstnameLabel.setBounds(10,  50, 100, 20);
+		instructorLastnameLabel.setBounds (10,  70, 100, 20);
+		instructorEmailLabel.setBounds    (10,  90, 100, 20);
+		instructorPhoneLabel.setBounds    (10, 110, 100, 20);
+
+		JTextField instructorWnumber =   new JTextField();
+		JTextField instructorFirstname = new JTextField();
+		JTextField instructorLastname =  new JTextField();
+		JTextField instructorEmail =     new JTextField();
+		JTextField instructorPhone =     new JTextField();
+		instructorWnumber.setBounds  (80,  30, 105, 20);
+		instructorFirstname.setBounds(80,  50, 105, 20);
+		instructorLastname.setBounds (80,  70, 105, 20);
+		instructorEmail.setBounds    (80,  90, 105, 20);
+		instructorPhone.setBounds    (80, 110, 105, 20);
+		
+		JComboBox<String> instructorList = new JComboBox<>(instructorsModel);
+		instructorList.setSelectedIndex(-1);
+		instructorList.setBounds(80, 5, 125, 20);
+		instructorList.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (instructorList.getSelectedIndex() >= 0) {
+					Schedule.Display(instructorList.getSelectedItem().toString());
+					instructorWnumber.setText  (ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getW_Number());				
+					instructorFirstname.setText(ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getFirstName());				
+					instructorLastname.setText (ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getLastName());				
+					instructorPhone.setText    (ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getPhone());				
+					instructorEmail.setText    (ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getEmail());
+					instructorEmail.setCaretPosition(0);
+				}
+			}
+		});
+		JButton instructorAdd = new JButton("Add");
+		instructorAdd.setBounds(10, 135, 195, 25);
+		instructorAdd.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!instructorWnumber.getText().equals("") &&
+						!instructorFirstname.getText().equals("") &&
+						!instructorLastname.getText().equals("") &&
+						!instructorEmail.getText().equals("") &&
+						!instructorPhone.getText().equals("")
+						){
+					String instructorFullName = instructorFirstname.getText() + " " + instructorLastname.getText();
+					ArrayList<Instructor> instructors = ObjectManager.getInstructors();
+					for (int i = 0; i < instructors.size(); i++) {
+						// If Instructor ID or BOTH first name and last name are already saved:
+						if (instructorWnumber.getText().equals(instructors.get(i).getW_Number()) ||
+								instructorFirstname.getText().equals(instructors.get(i).getFirstName()) &&
+								instructorLastname.getText().equals(instructors.get(i).getLastName())) {
+							JOptionPane.showMessageDialog(null, "Instructor is already in database!");
+							return;
+						}
+					}
+					Instructor.Create(instructorWnumber.getText(), instructorFirstname.getText(), instructorLastname.getText(), instructorEmail.getText(), instructorPhone.getText());
+					instructorList.addItem(instructorFullName);
+					if (instructorList.getItemCount() > 1)
+						instructorList.setSelectedIndex(instructors.size()-1);
+					instructorList.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "You must fill in all fields.");
+				}
+			}
+		});
+		JButton instructorUpdate = new JButton("Update");
+		instructorUpdate.setBounds(10, 165, 95, 25);
+		instructorUpdate.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!instructorWnumber.getText().equals("") &&
+						!instructorFirstname.getText().equals("") &&
+						!instructorLastname.getText().equals("") &&
+						!instructorPhone.getText().equals("") &&
+						!instructorEmail.getText().equals("")
+						){
+					if (!(instructorList.getSelectedIndex() == -1)) {
+						int instructorID = ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getID();						
+						Instructor.Update(instructorList.getSelectedIndex(),
+								instructorID,
+								instructorWnumber.getText(),
+								instructorFirstname.getText(),
+								instructorLastname.getText(),
+								instructorEmail.getText(),
+								instructorPhone.getText()
+								);
+						instructorList.setSelectedIndex(-1);
+						reloadDropDowns();
+					} else {
+						JOptionPane.showMessageDialog(null, "You must select a classroom above to update.");
+					}
+				} else {
+					JOptionPane.showMessageDialog(null, "You must fill in all fields.");
+				}
+			}
+		});
+		JButton instructorDelete = new JButton("Delete");
+		instructorDelete.setBounds(110, 165, 95, 25);
+		instructorDelete.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Instructor.Delete(ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getID());
+				reloadDropDowns();
+				instructorList.setSelectedIndex(-1);
+			}
+		});
+		instructorPanel.add(instructorListLabel);
+		instructorPanel.add(instructorList);
+		instructorPanel.add(instructorFirstnameLabel);		
+		instructorPanel.add(instructorWnumberLabel);
+		instructorPanel.add(instructorFirstnameLabel);
+		instructorPanel.add(instructorLastnameLabel);
+		instructorPanel.add(instructorEmailLabel);
+		instructorPanel.add(instructorPhoneLabel);
+		instructorPanel.add(instructorWnumber);
+		instructorPanel.add(instructorFirstname);
+		instructorPanel.add(instructorLastname);
+		instructorPanel.add(instructorEmail);
+		instructorPanel.add(instructorPhone);
+		instructorPanel.add(instructorAdd);
+		instructorPanel.add(instructorUpdate);
+		instructorPanel.add(instructorDelete);
+		instructorManager.add(instructorPanel);
 	}
 	private void ManagePrograms(){
 		
@@ -749,6 +910,24 @@ public class Window {
 			String classroomName = classrooms.get(i).getWing() + "-" + classrooms.get(i).getRoom();
 			classroomsModel.addElement(classroomName);
 		}
+		classroomsModel.setSelectedItem(null);
+		
+		ArrayList<Instructor> instructors = ObjectManager.getInstructors();
+		instructorsModel.removeAllElements();
+		for (int i = 0; i < instructors.size(); i++) {
+			String instructorName = instructors.get(i).getFirstName() + " " + instructors.get(i).getLastName();
+			instructorsModel.addElement(instructorName);
+		}
+		instructorsModel.setSelectedItem(null);
+		
+		ArrayList<Course> courses = ObjectManager.getCourses();
+		coursesModel.removeAllElements();
+		for (int i = 0; i < courses.size(); i++) {
+			String courseName = courses.get(i).getCode() + "-" + courses.get(i).getName();
+			coursesModel.addElement(courseName);
+		}
+		coursesModel.setSelectedItem(null);
+
 	}
 	
 	private int getLabType(JRadioButton noLab, JRadioButton macLab, JRadioButton netLab, JRadioButton windowsLab) {

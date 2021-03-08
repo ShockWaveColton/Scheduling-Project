@@ -1,0 +1,9 @@
+INSERT INTO instructors (instructor_wNumber, instructor_firstName, instructor_lastName, instructor_email, instructor_phone)
+VALUES ('w01234567', 'Darren', 'Andrews', 'darren.andrews@nscc.ca','9025551234');
+
+INSERT INTO classrooms (classroom_wing, classroom_number, classroom_labType)
+VALUES ('B', '304', 3);
+
+INSERT INTO courses (course_lab, course_code, course_name, course_hours, course_program, course_sections, course_instructor)
+VALUES (3, 'PROG1400', 'Intro to Java', 90, 'IT-Program', '2', 'Darren Andrews');
+

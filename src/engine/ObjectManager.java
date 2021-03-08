@@ -41,7 +41,7 @@ public class ObjectManager {
 
 	public static void addInstructorToList(Instructor instructor) {
 		instructors.add(instructor);
-		Schedule.Create(instructor.getName());
+		Schedule.Create(instructor.getW_Number());
 	}
 	
 	public static void addProgramToList(Program program) {
