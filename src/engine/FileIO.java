@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.swing.JFileChooser;
 //import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -111,6 +112,7 @@ public class FileIO {
 			    		sql = "CREATE TABLE schedules " +
 					    		"(schedule_id   INTEGER     PRIMARY KEY AUTOINCREMENT," +			    				
 					    		" schedule_name	VARCHAR(50) NOT NULL," +
+					    		" schedule_term	INTEGER     NOT NULL," +
 					    		" schedule_11   INTEGER," +
 					    		" schedule_12   INTEGER," +
 					    		" schedule_13   INTEGER," +
@@ -180,30 +182,23 @@ public class FileIO {
 //  Read each row of each table and load into appropriate object builders.
 //  The order here is paramount. EX: Since each Program has a Schedule, Schedules must be loaded first	
 	public static int LoadDatabase() {
-//    	final JFileChooser fileChooser = new JFileChooser(".\\");
-//    	int selectFile = fileChooser.showOpenDialog(null);
-//    	if (selectFile == JFileChooser.APPROVE_OPTION) {
-            File file = new File(".\\Sched.db");//fileChooser.getSelectedFile();
+    	final JFileChooser fileChooser = new JFileChooser(".\\");
+    	int selectFile = fileChooser.showOpenDialog(null);
+    	if (selectFile == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
             databaseName = file.getName();
             try {
                 Connect(file.toString());
     			System.out.println("connected");
                 ResultSet query;
-                // get all programs from database, pass each row in to Program builder.
+                // get all schedules from database, pass each row in to Schedules builder.
 
                 query = stmt.executeQuery("SELECT * FROM schedules ORDER BY schedule_id ASC");
                 while ( query.next()) {
-                	int ID   = query.getInt       ("schedule_id");
-                	String name  = query.getString("schedule_name");
-                	int scheduleData[][] = new int[5][9]; //Easier to grab 45 lessons in a loop:
-                	// I don't like hardcoding for loops like this, but I don't have a variable
-                	// for dimensions (since every week is 5 days x 9 hours).
-                	for (int x = 1; x < 5; x++) {
-                    	for (int y = 1; y < 9; y++) {
-                    		scheduleData[x][y] = query.getInt("schedule_"+x+y);
-                    	}
-                	}
-                	Schedule.Read(ID, name, scheduleData);
+                	int ID      = query.getInt   ("schedule_id");
+                	String name = query.getString("schedule_name");
+                	int term    = query.getInt   ("schedule_term");
+                	Schedule.ReadPass1(ID, name, term);
                 }
                 // get all programs from database, pass each row in to Program builder.
                 query = stmt.executeQuery("SELECT * FROM programs ORDER BY program_id ASC");
@@ -257,6 +252,19 @@ public class FileIO {
                 	int classroom = query.getInt ("lesson_classroom");
                 	Lesson.Read(ID, course, instructor, classroom);
                 }
+                query = stmt.executeQuery("SELECT * FROM schedules ORDER BY schedule_id ASC");
+                while ( query.next()) {
+                	int ID      = query.getInt   ("schedule_id");
+                	int scheduleData[][] = new int[5][9]; //Easier to grab 45 lessons in a loop:
+                	// I don't like hardcoding for loops like this, but I don't have a variable
+                	// for dimensions (since every week is 5 days x 9 hours).
+                	for (int x = 0; x < 5; x++) {
+                    	for (int y = 0; y < 9; y++) {
+                    		scheduleData[x][y] = query.getInt("schedule_"+(x+1)+(y+1));
+                    	}
+                	}
+                	Schedule.ReadPass2(ID, scheduleData);
+                }                
  	   	 		fileLoaded = true;
                 JOptionPane.showMessageDialog(null, "Loaded database file " + databaseName + " successfully!");
                 return 0;
@@ -270,6 +278,7 @@ public class FileIO {
 //        } else {
 //        	JOptionPane.showMessageDialog(null, "Load file failed. Try again.");
 //        }
+    	}
 		return -1;
 	}
 	public static int CreateProgram(String name, int schedule_id) {
@@ -485,18 +494,35 @@ public class FileIO {
 			System.out.println("disconnected.");
 		}
 	}
-	public static int CreateSchedule(String name) {
+	public static int CreateSchedule(String name, boolean isProgram) {
 		int ID = 0;
 		try {
 			Connect(databaseName);
 			System.out.println("connected");
-			String sql = "INSERT INTO schedules (schedule_name)" +
-					" VALUES ('" + name + "');";
+			String sql = "INSERT INTO schedules (schedule_name, schedule_term)" +
+					" VALUES ('" + name + "', 1);";
 	    	stmt.executeUpdate(sql);
 	    	conn.commit();
+			sql = "INSERT INTO schedules (schedule_name, schedule_term)" +
+					" VALUES ('" + name + "', 2);";
+	    	stmt.executeUpdate(sql);
+	    	conn.commit();
+	    	if (isProgram) {
+				sql = "INSERT INTO schedules (schedule_name, schedule_term)" +
+						" VALUES ('" + name + "', 3);";
+		    	stmt.executeUpdate(sql);
+		    	conn.commit();
+				sql = "INSERT INTO schedules (schedule_name, schedule_term)" +
+						" VALUES ('" + name + "', 4);";
+		    	stmt.executeUpdate(sql);
+		    	conn.commit();	    		
+	    	}
 	    	ResultSet query;
 	        query = stmt.executeQuery("SELECT schedule_id FROM schedules WHERE schedule_id=(SELECT max(schedule_id) FROM schedules);");
-	        ID = query.getInt("schedule_id");
+	        if (isProgram)
+		        ID = query.getInt("schedule_id") - 3; // We want the ID of the first insert
+	        else
+	        	ID = query.getInt("schedule_id") - 1; // See above
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Something went wrong.");
@@ -509,14 +535,16 @@ public class FileIO {
 	public static void ReadSchedule(int schedule_id) {
 		int ID = 0;
 		String name = "";
+		int term = 0;
 		int[][] scheduleData = new int[5][9];
 		try {
 			Connect(databaseName);
 			System.out.println("connected");
 			ResultSet query = stmt.executeQuery("SELECT * FROM schedules WHERE schedule_id = " + schedule_id +";");
             while ( query.next()) {
-            	ID      = query.getInt   ("schedule_id");
-            	name = query.getString("schedule_name");				
+            	ID   = query.getInt   ("schedule_id");
+            	name = query.getString("schedule_name");
+            	term = query.getInt   ("schedule_term");
             	for (int x = 1; x < 5; x++) {
                 	for (int y = 1; y < 9; y++) {
                 		scheduleData[x][y] = query.getInt("schedule_"+x+y);
@@ -530,7 +558,7 @@ public class FileIO {
     		Disconnect();
 			System.out.println("disconnected.");
     	}
-    	Schedule.Read(ID, name, scheduleData);            	
+    	Schedule.FullRead(ID, name, term, scheduleData);            	
 	}
 	public static void updateSchedule(int ID, String scheduleLocation, int scheduleValue) {
 		try {

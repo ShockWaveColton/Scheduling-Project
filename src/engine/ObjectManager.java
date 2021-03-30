@@ -56,4 +56,14 @@ public class ObjectManager {
 	public static void RemoveCourseFromList(Course course)             { courses.remove    (course);    }
 	public static void RemoveScheduleFromList(Schedule schedule)       { schedules.remove  (schedule);  }
 	public static void RemoveLessonFromList(Lesson lesson )            { lessons.remove    (lesson);    }
+
+	//Remove all data from all lists:
+	public static void ClearData() {
+		programs   .clear();
+		instructors.clear();
+		classrooms .clear();
+		courses    .clear();
+		schedules  .clear();
+		lessons    .clear();
+	}
 }

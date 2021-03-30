@@ -34,6 +34,7 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import objects.Classroom;
 import objects.Course;
 import objects.Instructor;
+import objects.Lesson;
 import objects.Program;
 import objects.Schedule;
 
@@ -52,6 +53,7 @@ public class Window {
 	private static JLabel lastClickedBot = new JLabel();
 	
 	private static int courseProgramValue = 0; // Global so I can get it out of the button ActionListeners.
+	private static int selectedTerm       = 0; // Global so it can be accessed by programs and instructors functions.
 	
 	private static JLabel[][][] scheduleLabel = new JLabel[5][9][3];
 	private static boolean[][][] isClicked;
@@ -77,6 +79,7 @@ public class Window {
 		file_new.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent arg0) {
+		    	ObjectManager.ClearData();
 		    	if (FileIO.NewDatabase() == 0) 
 		    		menuBar_Edit.setEnabled(true);
 		    	else
@@ -88,6 +91,7 @@ public class Window {
 		file_load.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent arg0) {
+		    	ObjectManager.ClearData();
 		    	if (FileIO.LoadDatabase() == 0) {
 		    		menuBar_Edit.setEnabled(true);
 		    		reloadDropDowns();
@@ -223,34 +227,59 @@ public class Window {
 		listCourses.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				FillSidePanel(window, listCourses, courseName, courseInstructor, courseClassroom, courseHours, courseSelectSchedule, courseApply);
+				FillSidePanel(window, listCourses, courseName, courseInstructor, courseClassroom, courseHours, courseSelectSchedule, courseApply);				
 			}
 		});
 
 		JComboBox<Program> listPrograms = new JComboBox<Program>(programsModel);
 		JComboBox<Instructor> listInstructors = new JComboBox<Instructor>(instructorsModel);
 
-		JLabel listSemestersLabel = new JLabel("Semester:");
-		listSemestersLabel.setBounds(200, 25, 100, 20);
+		JLabel listFallTermLabel = new JLabel("Fall:");
+		listFallTermLabel.setBounds(200, 25, 100, 20);
+		JLabel listWinterTermLabel = new JLabel("Winter:");
+		listWinterTermLabel.setBounds(280, 25, 100, 20);
 		JSlider listSemesters = new JSlider();
 		listSemesters.setBounds(200, 40, 120, 50);
 		listSemesters.setMinimum(1);
-		listSemesters.setMaximum(4);
+		listSemesters.setMaximum(2);
+		listSemesters.setValue(1);
 		listSemesters.setMajorTickSpacing(1);
 		listSemesters.setPaintLabels(true);
 		listSemesters.addChangeListener(new ChangeListener() {			
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				if (tabbedPane.getSelectedIndex() == 0) {
-					Schedule.Display(listInstructors.getSelectedItem());
-					fillCourseList((Instructor)listInstructors.getSelectedItem(), listSemesters.getValue(), listCourses);
-				} else if (tabbedPane.getSelectedIndex() == 1) {
-					Schedule.Display(listPrograms.getSelectedItem());
-					fillCourseList((Program)listPrograms.getSelectedItem(), listSemesters.getValue(), listCourses);				
+			    JSlider slider = (JSlider)e.getSource();
+				if (!slider.getValueIsAdjusting()) {
+					selectedTerm = listSemesters.getValue();
+					if (tabbedPane.getSelectedIndex() == 0) {				
+						listFallTermLabel.setText("Fall:");
+						listWinterTermLabel.setText("Winter:");
+						Schedule.Display(listInstructors.getSelectedItem(), listSemesters.getValue());
+						fillCourseList((Instructor)listInstructors.getSelectedItem(), listSemesters.getValue(), listCourses);
+					} else if (tabbedPane.getSelectedIndex() == 1) {
+						listFallTermLabel.setText("          Semester:");
+						listWinterTermLabel.setText("");
+						Schedule.Display(listPrograms.getSelectedItem(), listSemesters.getValue());
+						fillCourseList((Program)listPrograms.getSelectedItem(), listSemesters.getValue(), listCourses);				
+					}					
 				}
 			}
 		});
-		
+	    tabbedPane.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				listSemesters.setValue(1);
+				if(tabbedPane.getSelectedIndex() == 0) {
+					listSemesters.setMaximum(2);
+				} else if(tabbedPane.getSelectedIndex() == 1) {
+					listSemesters.setMaximum(4);					
+				}
+				listSemesters.setLabelTable(null);
+				listSemesters.setMajorTickSpacing(1);
+				listSemesters.setPaintLabels(true);
+			}
+		});
 		listPrograms.setRenderer(new ListCellRendererOverride());
 		listPrograms.setSelectedIndex(-1);
 		listPrograms.setBounds(5, 5, 160, 25);
@@ -258,7 +287,7 @@ public class Window {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (listPrograms.getSelectedIndex() >= 0) {
-					Schedule.Display(listPrograms.getSelectedItem());
+					Schedule.Display(listPrograms.getSelectedItem(), listSemesters.getValue());
 					fillCourseList((Program)listPrograms.getSelectedItem(), listSemesters.getValue(), listCourses);
 				}
 			}
@@ -271,22 +300,47 @@ public class Window {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (listInstructors.getSelectedIndex() >= 0) {
-					Schedule.Display(listInstructors.getSelectedItem());
+					Schedule.Display(listInstructors.getSelectedItem(), listSemesters.getValue());
 					fillCourseList((Instructor)listInstructors.getSelectedItem(), listSemesters.getValue(), listCourses);
 				}
 			}
 		});
 		
+		// Pressing the 'Apply' button to add course to schedules:
 		courseApply.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Schedule schedule = null;
-				if (tabbedPane.getSelectedIndex() == 0)
-					schedule = ((Instructor)listInstructors.getSelectedItem()).getSchedule();
-				else 
-					schedule = ((Program)listPrograms.getSelectedItem()).getSchedule();
-				schedule.setScheduleEvent(daySelected, timeSelected, (Course)listCourses.getSelectedItem());
-				DrawSchedule(schedule);
+				//TODO: finish collision detection.
+				//Check to see if any other instructor is using the same room at the same time:
+				ArrayList<Instructor> instructors = ObjectManager.getInstructors();
+				Course course = (Course)listCourses.getSelectedItem();
+				int instructorID = course.getInstructor();
+				int term = 0; 
+				int semester = listSemesters.getValue(); 
+				if (semester == 2 || semester == 4)
+					term = 1; // Term 1 is the lowest, so only add 1 if term 2 (semester 2 or 4) is selected.
+				int confirmOverwrite = -1;
+				for (int i = 0; i < instructors.size(); i++) {
+					Instructor instructor = instructors.get(i);
+					if (instructor.getID() != instructorID) { // Do not check the schedule of the selected course's instructor.
+						Schedule schedule = ObjectManager.getSchedules().get(instructor.getSchedule()-1 + term); // -1 for 0-based index.						
+						if (schedule.hasEvent(daySelected,timeSelected)) { // if true, then there is a potential collision, check which for classroom collision.
+							Lesson scheduledLesson = schedule.getSpecificLesson(daySelected, timeSelected);
+							Classroom courseClassroom = ObjectManager.getClassrooms().get(course.getClassroom());
+							if (scheduledLesson.getClassroom() == courseClassroom) { // Classrooms match, conflict confirmed. Alert, and ask to overwrite.
+								String instructorName = instructor.getFullName(); 
+								confirmOverwrite = JOptionPane.showConfirmDialog(null, instructorName + "is teaching another class is here. Overwrite?", "Collision Detected", JOptionPane.YES_NO_OPTION);
+								if (confirmOverwrite == JOptionPane.YES_OPTION) {
+									AddToSchedule(course, term);
+									break;
+								}
+							} 
+						} 
+					}
+				}
+				if (confirmOverwrite == -1) { // No class scheduled at this time, proceed with insertion.
+						AddToSchedule(course, term);
+				}
 			}
 		});
 		
@@ -296,7 +350,8 @@ public class Window {
 		instructorPanel.add(listInstructors);
 		programPanel.add(listPrograms);
 		panel.add(listCourses);
-		panel.add(listSemestersLabel);
+		panel.add(listWinterTermLabel);
+		panel.add(listFallTermLabel);
 		panel.add(listSemesters);
 		panel.add(courseDetails);
 		panel.add(courseName);
@@ -311,25 +366,169 @@ public class Window {
 		window.setVisible(true);
 	}
 
+	private void AddToSchedule(Course course, int term) {
+		//TODO: Remove lessons from appropriate schedules when overwriting.
+		int scheduleID = 0;
+		//Adding course to instructor schedule:
+		Instructor instructor = null;
+		for (int i = 0; i < instructorsModel.getSize(); i++) {
+			if (instructorsModel.getElementAt(i).getID() == course.getInstructor()) {
+				instructor = instructorsModel.getElementAt(i);
+				break;
+			}
+		}
+		Schedule schedule = ObjectManager.getSchedules().get(instructor.getSchedule()-1 + term);//-1 for zero-based index, + term for winter term.
+		scheduleID = schedule.getID();
+		schedule.setScheduleEvent(daySelected, timeSelected, course);
+		// Then the appropriate program schedules as needed:
+		int program_id = (course).getProgram();
+		switch (program_id) {
+			case 1: {
+				AssignCourseProgramSchedule(0, course);
+				break;
+			} case 2: {
+				AssignCourseProgramSchedule(1, course);
+				break;
+			} case 3: {
+				AssignCourseProgramSchedule(0, course);
+				AssignCourseProgramSchedule(1, course);
+				break;
+			} case 4: {
+				AssignCourseProgramSchedule(2, course);
+				break;
+			} case 5: {
+				AssignCourseProgramSchedule(0, course);
+				AssignCourseProgramSchedule(2, course);
+				break;
+			} case 6: {
+				AssignCourseProgramSchedule(1, course);
+				AssignCourseProgramSchedule(2, course);
+				break;
+			} case 7: {
+				AssignCourseProgramSchedule(0, course);
+				AssignCourseProgramSchedule(1, course);
+				AssignCourseProgramSchedule(2, course);
+				break;
+			} case 8: {
+				AssignCourseProgramSchedule(3, course);
+				break;
+			} case 9: {
+				AssignCourseProgramSchedule(0, course);
+				AssignCourseProgramSchedule(3, course);
+				break;
+			} case 10:{
+				AssignCourseProgramSchedule(1, course);
+				AssignCourseProgramSchedule(3, course);
+				break;
+			} case 11: {
+				AssignCourseProgramSchedule(0, course);
+				AssignCourseProgramSchedule(1, course);
+				AssignCourseProgramSchedule(3, course);
+				break;
+			} case 12: {
+				AssignCourseProgramSchedule(2, course);
+				AssignCourseProgramSchedule(3, course);
+				break;
+			} case 13: {
+				AssignCourseProgramSchedule(0, course);
+				AssignCourseProgramSchedule(2, course);
+				AssignCourseProgramSchedule(3, course);
+				break;
+			} case 14: {
+				AssignCourseProgramSchedule(1, course);
+				AssignCourseProgramSchedule(2, course);
+				AssignCourseProgramSchedule(3, course);
+				break;
+			} case 15: {
+				AssignCourseProgramSchedule(0, course);
+				AssignCourseProgramSchedule(1, course);
+				AssignCourseProgramSchedule(2, course);
+				AssignCourseProgramSchedule(3, course);
+				break;
+			} default:
+				throw new IllegalArgumentException("Unexpected value: " + program_id);
+		}
+		DrawSchedule(scheduleID);
+	}
+
 	protected void FillSidePanel(JFrame window, JComboBox<Course> listCourses, JLabel courseName, JLabel courseInstructor, JLabel courseClassroom, JLabel courseHours, JLabel courseSelectSchedule, JButton courseApply) {
 		if (listCourses.getSelectedIndex() > -1) {
-			String courseNameText =       ((Course)listCourses.getSelectedItem()).getName();
-			String courseCodeText =       ((Course)listCourses.getSelectedItem()).getFullName();
-			String courseInstructorText = GetCourseInstructorName((Course)listCourses.getSelectedItem()); // Needs to be a function because instructormodel doesn't match sorted list
-			String courseClassroomText =  GetCourseClassroomName((Course)listCourses.getSelectedItem()); // Same as above.
-			String courseHoursText =      CalculateCourseHours((Course)listCourses.getSelectedItem());
+			Course course = (Course)listCourses.getSelectedItem();
+			String courseNameText =       course.getName();
+			String courseCodeText =       course.getFullName();
+			String courseInstructorText = GetCourseInstructorName(course); // Needs to be a function because instructormodel doesn't match sorted list
+			String courseClassroomText =  GetCourseClassroomName(course); // Same as above.
+			String courseHoursText =      CalculateCourseHours(course);
 			courseName.setText      ("<html>Name:<br>"       + courseNameText);
 			courseInstructor.setText("<html>Instructor:<br>" + courseInstructorText);
 			courseClassroom.setText ("<html>Classroom:<br>"  + courseClassroomText);
 			courseHours.setText     ("<html>Hours:<br>Scheduled / Total (remaining):<br>" + courseHoursText);
-			courseApply.setText("<html>Apply " + courseCodeText + "<br> to something");
+			String applyDayString = "";
+			String applyTimeString = "";
 			if (slotSelected) {
+				for (int x = 0; x < 5; x++) {
+					for (int y = 0; y < 9; y++) {
+						if (isClicked[x][y][0]) {
+							switch (x) {
+								case 0: {
+									applyDayString = "Monday";
+									break;
+								} case 1: {
+									applyDayString = "Tuesday";
+									break;
+								} case 2: {
+									applyDayString = "Wednesday";
+									break;
+								} case 3: {
+									applyDayString = "Thursday";
+									break;
+								} case 4: {
+									applyDayString = "Friday";
+									break;
+								} default:
+									throw new IllegalArgumentException("Unexpected value: " + x);
+							}
+							switch (y) {
+								case 0: {
+									applyTimeString = "8:30am";
+									break;
+								} case 1: {
+									applyTimeString = "9:30am";
+									break;
+								} case 2: {
+									applyTimeString = "10:30am";
+									break;
+								} case 3: {
+									applyTimeString = "11:30am";
+									break;
+								} case 4: {
+									applyTimeString = "12:30pm";
+									break;
+								} case 5: {
+									applyTimeString = "1:30pm";
+									break;
+								} case 6: {
+									applyTimeString = "2:30pm";
+									break;
+								} case 7: {
+									applyTimeString = "3:30pm";
+									break;
+								} case 8: {
+									applyTimeString = "4:30pm";
+									break;
+								} default:
+									throw new IllegalArgumentException("Unexpected value: " + x);
+							}
+						}
+					}
+				}
 				courseApply.setVisible(true);
 				courseSelectSchedule.setVisible(false);
 			} else {
 				courseApply.setVisible(false);
 				courseSelectSchedule.setVisible(true);						
 			}
+			courseApply.setText("<html>Apply " + courseCodeText + "<br> to " + applyDayString + " at " + applyTimeString + ".");
 			window.setSize(845, 840);
 		} else {
 			window.setSize(635, 840);
@@ -361,30 +560,10 @@ public class Window {
 	}
 	
 	
-	protected String CalculateCourseHours(Course course) {
+	private String CalculateCourseHours(Course course) {
 		// This function returns three values:
 		// ... the hours currently scheduled...
-		int courseScheduledHours = 0;
-		int courseInstructorID = course.getInstructor();
-		Instructor courseInstructor = null;
-		for (int i = 0; i < instructorsModel.getSize(); i++) {
-			if (instructorsModel.getElementAt(i).getID() == courseInstructorID)
-				courseInstructor = instructorsModel.getElementAt(i);
-		}
-			Schedule instructorSchedule = null;
-		if (courseInstructor != null)
-			instructorSchedule = courseInstructor.getSchedule();
-		if(instructorSchedule != null) {
-			for (int x = 0; x < 5; x++) {
-				for (int y = 0; y < 9; y++) {
-					if (instructorSchedule.getScheduleEvent(x, y) != null) {
-						if (instructorSchedule.getScheduleEvent(x, y).getCourse().getID() == course.getID())
-							courseScheduledHours++;						
-					}
-				}	
-			}
-			courseScheduledHours *= 15;
-		}
+		int courseScheduledHours = CalculateScheduledCourseHours(course);
 		// ... the total hours of a program...
 		int courseTotalHours = course.getHours();
 		// ... and the hours remaining to schedule.
@@ -393,9 +572,47 @@ public class Window {
 		String courseHours = courseScheduledHours + " / " + courseTotalHours + " ("+ courseRemainingHours + ")";
 		return courseHours;
 	}
+	
+	private int CalculateScheduledCourseHours(Course course) {
+		int courseScheduledHours = 0;
+		int courseInstructorID = course.getInstructor();
+		Instructor courseInstructor = null;
+		for (int i = 0; i < instructorsModel.getSize(); i++) {
+			if (instructorsModel.getElementAt(i).getID() == courseInstructorID) {
+				courseInstructor = instructorsModel.getElementAt(i);
+				break;
+			}
+		}
+		int instructorScheduleID = 0;
+		int semester = course.getSemester();
+		int term = 0; 
+		if (semester == 2 || semester == 4) // If course is in winter term, add one to term.
+			term = 1; 
+		if (courseInstructor != null)
+			instructorScheduleID = (courseInstructor.getSchedule()) + term;
+		Schedule schedule = ObjectManager.getSchedules().get(instructorScheduleID - 1);  //-1 to account for 0-based index. 
+		if(instructorScheduleID > 0) {
+			for (int x = 0; x < 5; x++) {
+				for (int y = 0; y < 9; y++) {
+					if (schedule.getSpecificLesson(x, y) != null) {
+						if (schedule.getSpecificLesson(x, y).getCourse().getID() == course.getID())
+							courseScheduledHours++;						
+					}
+				}	
+			}
+			return courseScheduledHours *= 15;
+		}
+		return 0;
+	}
 
 
-	public static void DrawSchedule(Schedule schedule) {
+	public static void DrawSchedule(int schedule_id) {
+		Schedule schedule = null;
+		ArrayList<Schedule> schedules = ObjectManager.getSchedules();
+		for (int i = 0; i < schedules.size(); i++) {
+			if (schedules.get(i).getID() == schedule_id)
+				schedule = ObjectManager.getSchedules().get(i);
+		}
 		Border topBorder = BorderFactory.createMatteBorder(2, 2, 0, 2, Color.black);
 		Border midBorder = BorderFactory.createMatteBorder(0, 2, 0, 2, Color.black);
 		Border botBorder = BorderFactory.createMatteBorder(0, 2, 2, 2, Color.black);
@@ -541,7 +758,8 @@ public class Window {
 							slotSelected = true;
 							daySelected = innerX;
 							timeSelected = innerY;
-							//TODO: set Apply button text with greater accuracy.
+							//TODO: fix this mess (FillSidePanel by click on schedule block)
+							//FillSidePanel(this, listCourses, courseName, courseInstructor, courseClassroom, courseHours, courseSelectSchedule, courseApply);							
 						}
 						public void mouseEntered(MouseEvent e) {
 							if (!(isClicked[innerX][innerY][0] || isClicked[innerX][innerY][1] || isClicked[innerX][innerY][2])) {
@@ -563,17 +781,14 @@ public class Window {
 				if (schedule != null)
 				{
 					if (schedule.hasEvent(x,y)) {
-						scheduleLabel[x][y][0].setText(schedule.getScheduleEvent(x, y).getCourse().getFullName());
-						scheduleLabel[x][y][1].setText(schedule.getScheduleEvent(x, y).getInstructor().getFullName());
-						scheduleLabel[x][y][2].setText(schedule.getScheduleEvent(x, y).getClassroom().getName());					
+						scheduleLabel[x][y][0].setText(schedule.getSpecificLesson(x, y).getCourse().getFullName());
+						scheduleLabel[x][y][1].setText(schedule.getSpecificLesson(x, y).getInstructor().getFullName());
+						scheduleLabel[x][y][2].setText(schedule.getSpecificLesson(x, y).getClassroom().getName());					
 					} else {
 						scheduleLabel[x][y][0].setText("");
 						scheduleLabel[x][y][1].setText("");
 						scheduleLabel[x][y][2].setText("");
 					}
-//					scheduleLabel[x][y][0].paintImmediately(scheduleLabel[x][y][0].getVisibleRect());
-//					scheduleLabel[x][y][1].paintImmediately(scheduleLabel[x][y][1].getVisibleRect());
-//					scheduleLabel[x][y][2].paintImmediately(scheduleLabel[x][y][2].getVisibleRect());					
 				}
 			}			
 		}
@@ -638,7 +853,7 @@ public class Window {
 							return;
 						}
 					}
-					programList.addItem(Program.Create(programName.getText()));
+					programList.addItem(Program.Create(programName.getText(), selectedTerm));
 					
 					if (programList.getItemCount() > 1)
 						programList.setSelectedIndex(programs.size()-1);
@@ -656,8 +871,8 @@ public class Window {
 				if (!programName.getText().equals("")) {
 					if (!(programList.getSelectedIndex() == -1)) {
 						int ID = ObjectManager.getPrograms().get(programList.getSelectedIndex()).getID();
-						Schedule schedule = ObjectManager.getPrograms().get(programList.getSelectedIndex()).getSchedule();
-						Program.Update(programList.getSelectedIndex(), ID, programName.getText(), schedule);
+						int schedule_id = ObjectManager.getPrograms().get(programList.getSelectedIndex()).getSchedule();
+						Program.Update(programList.getSelectedIndex(), ID, programName.getText(), schedule_id);
 						reloadDropDowns();
 					} else
 						JOptionPane.showMessageDialog(null, "You must select a program above to update.");
@@ -759,7 +974,7 @@ public class Window {
 							return;
 						}
 					}
-					instructorList.addItem(Instructor.Create(instructorWnumber.getText(), instructorFirstname.getText(), instructorLastname.getText(), instructorPhone.getText(), instructorEmail.getText()));
+					instructorList.addItem(Instructor.Create(instructorWnumber.getText(), instructorFirstname.getText(), instructorLastname.getText(), instructorPhone.getText(), instructorEmail.getText(), selectedTerm));
 					if (instructorList.getItemCount() > 1)
 						instructorList.setSelectedIndex(instructors.size()-1);
 					instructorList.setVisible(true);
@@ -781,13 +996,15 @@ public class Window {
 						){
 					if (!(instructorList.getSelectedIndex() == -1)) {
 						int instructorID = ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getID();						
+						int instructorSchedule = ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getSchedule();						
 						Instructor.Update(instructorList.getSelectedIndex(),
 								instructorID,
 								instructorWnumber.getText(),
 								instructorFirstname.getText(),
 								instructorLastname.getText(),
 								instructorEmail.getText(),
-								instructorPhone.getText()
+								instructorPhone.getText(),
+								instructorSchedule
 								);
 						instructorList.setSelectedIndex(-1);
 						reloadDropDowns();
@@ -920,6 +1137,7 @@ public class Window {
 					}
 					int labType = GetLabType(noLab, macLab, netLab, winLab, hardLab);
 					Classroom.Create(classroom_wing.getText(), classroom_number.getText(), labType);
+					reloadDropDowns();
 					if (classroomList.getItemCount() > 1)
 						classroomList.setSelectedIndex(classrooms.size()-1);
 					classroomList.setVisible(true);
@@ -1253,7 +1471,8 @@ public class Window {
 						}
 					}
 					int labType = GetLabType(noLab, macLab, netLab, winLab, hardLab);					
-					Course.Create(courseCode.getText(), courseName.getText(),  Integer.parseInt(courseSection.getText()), int_courseHours, labType, courseProgramValue, courseSemester.getValue(), courseInstructorID, courseClassroomID);					              
+					Course.Create(courseCode.getText(), courseName.getText(),  Integer.parseInt(courseSection.getText()), int_courseHours, labType, courseProgramValue, courseSemester.getValue(), courseInstructorID, courseClassroomID);
+					reloadDropDowns();
 					if (courseList.getItemCount() > 1)
 						courseList.setSelectedIndex(courses.size()-1);
 					courseList.setVisible(true);
@@ -1389,69 +1608,87 @@ public class Window {
 		// When the Program Combobox on the main JFrame changes value, this function will
 		// reset the Courses associated with the selected program (also on the main JFrame).
 		courseList.removeAllItems();
+		if (program == null)
+			return;
 		int programID = (int)Math.pow(2, program.getID()-1);
 		for (int i = 0; i < coursesModel.getSize(); i++) {
 			int courseProgram = coursesModel.getElementAt(i).getProgram();
 			int courseSemester = coursesModel.getElementAt(i).getSemester();
+			int courseHours = coursesModel.getElementAt(i).getHours();
 			switch (courseProgram) {
 				case 1:
 					if (courseSemester == semester && programID == 1)
-						courseList.addItem(coursesModel.getElementAt(i));
+						if (CalculateScheduledCourseHours(coursesModel.getElementAt(i)) < courseHours)
+							courseList.addItem(coursesModel.getElementAt(i));
 					break;
 				case 2:
 					if (courseSemester == semester && programID == 2)
+						if (CalculateScheduledCourseHours(coursesModel.getElementAt(i)) < courseHours)
 						courseList.addItem(coursesModel.getElementAt(i));
 					break;
 				case 3:
 					if (courseSemester == semester && (programID == 1 || programID == 2))
+						if (CalculateScheduledCourseHours(coursesModel.getElementAt(i)) < courseHours)
 						courseList.addItem(coursesModel.getElementAt(i));
 					break;
 				case 4:
 					if (courseSemester == semester && programID == 4)
+						if (CalculateScheduledCourseHours(coursesModel.getElementAt(i)) < courseHours)
 						courseList.addItem(coursesModel.getElementAt(i));
 					break;
 				case 5:
 					if (courseSemester == semester && (programID == 1 || programID == 4))
+						if (CalculateScheduledCourseHours(coursesModel.getElementAt(i)) < courseHours)
 						courseList.addItem(coursesModel.getElementAt(i));
 					break;
 				case 6:
 					if (courseSemester == semester && (programID == 2 || programID == 4))
+						if (CalculateScheduledCourseHours(coursesModel.getElementAt(i)) < courseHours)
 						courseList.addItem(coursesModel.getElementAt(i));
 					break;
 				case 7:
 					if (courseSemester == semester && (programID == 3 || programID == 4))
+						if (CalculateScheduledCourseHours(coursesModel.getElementAt(i)) < courseHours)
 						courseList.addItem(coursesModel.getElementAt(i));
 					break;
 				case 8:
 					if (courseSemester == semester && programID == 8)
+						if (CalculateScheduledCourseHours(coursesModel.getElementAt(i)) < courseHours)
 						courseList.addItem(coursesModel.getElementAt(i));
 					break;
 				case 9:
 					if (courseSemester == semester && (programID == 1 || programID == 8))
+						if (CalculateScheduledCourseHours(coursesModel.getElementAt(i)) < courseHours)
 						courseList.addItem(coursesModel.getElementAt(i));
 					break;
 				case 10:
 					if (courseSemester == semester && (programID == 2 || programID == 8))
+						if (CalculateScheduledCourseHours(coursesModel.getElementAt(i)) < courseHours)
 						courseList.addItem(coursesModel.getElementAt(i));
 					break;
 				case 11:
 					if (courseSemester == semester && (programID == 1 || programID == 2 || programID == 8))
+						if (CalculateScheduledCourseHours(coursesModel.getElementAt(i)) < courseHours)
 						courseList.addItem(coursesModel.getElementAt(i));
 					break;
 				case 12:
 					if (courseSemester == semester && (programID == 4 || programID == 8))
+						if (CalculateScheduledCourseHours(coursesModel.getElementAt(i)) < courseHours)
 						courseList.addItem(coursesModel.getElementAt(i));
 					break;
 				case 13:
 					if (courseSemester == semester && (programID == 1 || programID == 4 || programID == 8))
+						if (CalculateScheduledCourseHours(coursesModel.getElementAt(i)) < courseHours)
 						courseList.addItem(coursesModel.getElementAt(i));
 					break;
 				case 14:
 					if (courseSemester == semester && (programID == 2 || programID == 4 || programID == 8))
+						if (CalculateScheduledCourseHours(coursesModel.getElementAt(i)) < courseHours)
 						courseList.addItem(coursesModel.getElementAt(i));
 					break;
 				case 15:
 					if (courseSemester == semester)
+						if (CalculateScheduledCourseHours(coursesModel.getElementAt(i)) < courseHours)
 						courseList.addItem(coursesModel.getElementAt(i));
 					break;
 			}
@@ -1464,9 +1701,18 @@ public class Window {
 		for (int i = 0; i < coursesModel.getSize(); i++) {	
 			Course tempCourse = coursesModel.getElementAt(i);
 			if (tempCourse.getInstructor() == instructor.getID() &&
-					tempCourse.getSemester() == semester) {
-				courseList.addItem(tempCourse);
+					(tempCourse.getSemester() == semester || tempCourse.getSemester() == (semester + 2))) {
+				if (CalculateScheduledCourseHours(tempCourse) < coursesModel.getElementAt(i).getHours()) {
+					courseList.addItem(tempCourse);
+				}
 			}
 		}
+	}
+	
+	private void AssignCourseProgramSchedule(int program_id, Course course) {
+		int term = course.getSemester() -1; // -1 to line up terms. Term starts at one, so 1 + (4-1) = 4.
+		Program tempProgram = ObjectManager.getPrograms().get(program_id);
+		Schedule tempSchedule = ObjectManager.getSchedules().get(tempProgram.getSchedule() - 1 + term);  //-1 for 0-based index.
+		tempSchedule.setScheduleEvent(daySelected, timeSelected, course);						
 	}
 }
