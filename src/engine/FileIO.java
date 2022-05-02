@@ -28,7 +28,7 @@ public class FileIO {
 		if (conn == null) {
 	    	Class.forName("org.sqlite.JDBC");            
 			conn = DriverManager.getConnection("jdbc:sqlite:"+ fileName);
-	    	if (conn != null) { 
+	    	if (conn != null) {
 				conn.setAutoCommit(false);
 			}
 	        stmt = conn.createStatement();			
@@ -560,11 +560,28 @@ public class FileIO {
     	}
     	Schedule.FullRead(ID, name, term, scheduleData);            	
 	}
+	// Adding a new lesson to a schedule
 	public static void updateSchedule(int ID, String scheduleLocation, int scheduleValue) {
 		try {
 			Connect(databaseName);
 			String sql = "UPDATE schedules" +
 					" SET schedule_" + scheduleLocation + " = " + scheduleValue +
+					" WHERE schedule_id = " + ID;
+			stmt.executeUpdate(sql);
+			conn.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Something went wrong.");
+		} finally {
+			Disconnect();
+		}		
+	}
+	// Deleting a lesson from a schedule.
+	public static void updateSchedule(int ID, String scheduleLocation) {
+		try {
+			Connect(databaseName);
+			String sql = "UPDATE schedules" +
+					" SET schedule_" + scheduleLocation + " = NULL" +
 					" WHERE schedule_id = " + ID;
 			stmt.executeUpdate(sql);
 			conn.commit();

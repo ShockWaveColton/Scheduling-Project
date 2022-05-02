@@ -13,6 +13,7 @@ public class Schedule {
 	private int        term;
 	private Lesson[][] lessons;
 	
+	// Constructor for new Schedule
 	private Schedule(int ID, String name, int term) {
 		this.ID = ID;
 		this.name = name;
@@ -127,7 +128,6 @@ public class Schedule {
 			for (int i = 0; i < schedules.size(); i++) {
 				//System.out.println(schedules.get(i).getScheduleName() + " - " + ((Program)object).getName());
 				if (schedules.get(i).getScheduleName().equals(((Program)object).getName()) && schedules.get(i).getTerm() == semester) {
-					System.out.println("Match!");
 					Window.DrawSchedule(schedules.get(i).getID());
 					break;
 				}
@@ -139,12 +139,17 @@ public class Schedule {
 				//System.out.println("(" + schedules.get(i).getScheduleName() + "_" + schedules.get(i).getTerm() + ") - (" + ((Instructor)object).getW_Number() + "_" + semester + ")");
 				if (schedules.get(i).getScheduleName().equals(((Instructor)object).getW_Number())) {
 					if (schedules.get(i).getTerm() == semester) {
-						System.out.println("Match!");
 						Window.DrawSchedule(schedules.get(i).getID());	
 						break;						
 					}
 				}
 			}
 		}					
+	}
+	
+	//Remove a lesson from the schedule, and from the schedule database
+	public void DeleteScheduledEvent(int day, int time) {
+		String scheduleLocation = (day+1) + "" + (time+1);
+		FileIO.updateSchedule(ID, scheduleLocation);
 	}
 }

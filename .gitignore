@@ -1,1 +1,5 @@
 /bin/
+.DS_Store
+.project
+*.db
+database_TestData.txt

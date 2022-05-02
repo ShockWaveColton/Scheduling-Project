@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import engine.FileIO;
 import engine.ObjectManager;
 
-
 // Member variables:
 public class Program {
 	private int    ID;
@@ -34,6 +33,7 @@ public class Program {
 		return program;
 	}
 	
+	// Reading in data from database, converting it into objects, and loading objects into the arraylist:
 	public static void Read(int ID, String name, int schedule) {
 		new Program(ID, name, schedule);
 	}

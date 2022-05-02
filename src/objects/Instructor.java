@@ -72,13 +72,4 @@ public class Instructor {
 				instructors.remove(i);
 		}
 	}
-	private static Schedule getSchedule(int schedule_id) {
-		ArrayList<Schedule> schedules = ObjectManager.getSchedules();
-		for (int i = 0; i < schedules.size(); i++) {
-			if (schedules.get(i).getID() == schedule_id)
-				return schedules.get(i);
-		}
-		return null;
-	}
-
 }

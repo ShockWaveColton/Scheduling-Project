@@ -62,6 +62,13 @@ public class Window {
 	private static int timeSelected;
 	
 	public Window(ObjectManager objectManager) {
+		for (int x = 0; x < 5; x++) {
+			for (int y = 0; y < 9; y++) {
+				for (int z = 0; z < 3; z++) {
+					scheduleLabel[x][y][z] = new JLabel();
+				}
+			}
+		}
 //		this.objectManager = objectManager;
 		JFrame window = new JFrame("NSCC Scheduling Protoype");
 		window.setSize(635, 840);
@@ -209,15 +216,17 @@ public class Window {
 		JLabel  courseInstructor     = new JLabel("Instructor:");
 		JLabel  courseClassroom      = new JLabel("Classroom:");
 		JLabel  courseHours          = new JLabel("Hours:");
-		JLabel  courseSelectSchedule = new JLabel("<html><b>Select a Day/Time<br>to add course to schedule.");
-		JButton courseApply          = new JButton("Apply "); 
+		JLabel  courseApplyLabel     = new JLabel("<html><b>Select a Day/Time<br>to add course to schedule.");
+		JButton courseApply          = new JButton("Apply");
+		JButton courseDelete		 = new JButton("Delete");
 		courseDetails.setBounds       (630, 60,  100, 40);
 		courseName.setBounds          (630, 100, 200, 45);
 		courseInstructor.setBounds    (630, 150, 200, 40);
 		courseClassroom.setBounds     (630, 200, 200, 40);
 		courseHours.setBounds         (630, 250, 200, 45);
-		courseSelectSchedule.setBounds(630, 320, 200, 40);
+		courseApplyLabel.setBounds(630, 320, 200, 40);
 		courseApply.setBounds         (630, 320, 180, 40);
+		courseDelete.setBounds        (630, 370, 180, 40);
 
 		//This is a special comboBox for adding courses (thus everything) to the selected schedule.
 		JComboBox<Course> listCourses = new JComboBox<Course>();
@@ -227,7 +236,7 @@ public class Window {
 		listCourses.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				FillSidePanel(window, listCourses, courseName, courseInstructor, courseClassroom, courseHours, courseSelectSchedule, courseApply);				
+				FillSidePanel(window, listCourses, courseName, courseInstructor, courseClassroom, courseHours, courseApplyLabel, courseApply);				
 			}
 		});
 
@@ -310,7 +319,6 @@ public class Window {
 		courseApply.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO: finish collision detection.
 				//Check to see if any other instructor is using the same room at the same time:
 				ArrayList<Instructor> instructors = ObjectManager.getInstructors();
 				Course course = (Course)listCourses.getSelectedItem();
@@ -329,7 +337,7 @@ public class Window {
 							Classroom courseClassroom = ObjectManager.getClassrooms().get(course.getClassroom());
 							if (scheduledLesson.getClassroom() == courseClassroom) { // Classrooms match, conflict confirmed. Alert, and ask to overwrite.
 								String instructorName = instructor.getFullName(); 
-								confirmOverwrite = JOptionPane.showConfirmDialog(null, instructorName + "is teaching another class is here. Overwrite?", "Collision Detected", JOptionPane.YES_NO_OPTION);
+								confirmOverwrite = JOptionPane.showConfirmDialog(null, instructorName + " is teaching another class is here. Overwrite?", "Collision Detected", JOptionPane.YES_NO_OPTION);
 								if (confirmOverwrite == JOptionPane.YES_OPTION) {
 									AddToSchedule(course, term);
 									break;
@@ -338,12 +346,65 @@ public class Window {
 						} 
 					}
 				}
-				if (confirmOverwrite == -1) { // No class scheduled at this time, proceed with insertion.
-						AddToSchedule(course, term);
+				if (confirmOverwrite == -1) { // No class scheduled at this location, proceed with insertion.
+					AddToSchedule(course, term);
 				}
 			}
 		});
-		
+		courseDelete.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// If a schedule block is selected, get the course (via the Lesson), and instructor
+				// Remove the lesson from all appropriate schedules (this is why course is needed).
+				if(slotSelected) {
+					int scheduleID = 0;
+					Instructor instructor = null;
+					Program program = null;
+					// Get scheduleID of selected object (instructor or program):
+					if (tabbedPane.getSelectedIndex() == 0) { //Instructor Selected:
+						instructor = (Instructor)listInstructors.getSelectedItem();
+						scheduleID = instructor.getSchedule();
+					} else { 								  //Program Selected:
+						program = (Program)listPrograms.getSelectedItem();
+						scheduleID = program.getSchedule();
+					}
+					int term = listSemesters.getValue() - 1;
+					// Get the schedule of the selected object:
+					Schedule schedule = null; 
+					ArrayList<Schedule> schedules = ObjectManager.getSchedules();
+					for (int i = 0; i < schedules.size(); i++) {
+						if (schedules.get(i).getID() == scheduleID) {
+							schedule = schedules.get(i + term);
+							break;
+						}
+					}
+					Lesson lesson = schedule.getSpecificLesson(daySelected, timeSelected);
+					// TODO: Delete lessons from program when instructor selected.
+					//Course course = lesson.getCourse();
+					//int programID = course.getProgram();
+
+					if (tabbedPane.getSelectedIndex() == 1 && lesson != null) // Still need instructor if program was selected
+						instructor = lesson.getInstructor();
+					// Get confirmation that they do infact want to remove the data.
+					if (JOptionPane.showConfirmDialog(null, "Warning! You are about to permanently remove this lesson from the schedule.\n"
+							+ "THIS ACTION CANNOT BE UNDONE!\nDo you wish to proceed?", "Delete Lesson?", JOptionPane.YES_NO_OPTION) == 0) {
+						//Remove lesson from selected block of selected object.
+						schedule.DeleteScheduledEvent(daySelected, timeSelected);
+						//Remove lesson from the other matching schedule:
+						if (tabbedPane.getSelectedIndex() == 0) //Instructor Selected:
+							schedule = schedules.get(program.getSchedule());
+						else
+							schedule = schedules.get(instructor.getSchedule());
+						schedule.DeleteScheduledEvent(daySelected, timeSelected);
+						// Redraw the schedule of the selected object after the change:
+						if (tabbedPane.getSelectedIndex() == 0) //Instructor Selected:
+							DrawSchedule(instructor.getSchedule());
+						else
+							DrawSchedule(program.getSchedule());						
+					}
+				}
+			}
+		});
 		panel.add(menuBar);
 		panel.add(tabbedPane);
 		panel.add(listCoursesLabel);
@@ -358,8 +419,9 @@ public class Window {
 		panel.add(courseInstructor);
 		panel.add(courseClassroom);
 		panel.add(courseHours);
-		panel.add(courseSelectSchedule);
+		panel.add(courseApplyLabel);
 		panel.add(courseApply);
+		panel.add(courseDelete);
 
 		panel.setVisible(true);
 		window.add(panel);
@@ -367,7 +429,7 @@ public class Window {
 	}
 
 	private void AddToSchedule(Course course, int term) {
-		//TODO: Remove lessons from appropriate schedules when overwriting.
+		//TODO: Remove lessons from all appropriate schedules when overwriting.
 		int scheduleID = 0;
 		//Adding course to instructor schedule:
 		Instructor instructor = null;
@@ -586,7 +648,7 @@ public class Window {
 		int instructorScheduleID = 0;
 		int semester = course.getSemester();
 		int term = 0; 
-		if (semester == 2 || semester == 4) // If course is in winter term, add one to term.
+		if (semester == 2 || semester == 4) // If course is in winter term, set term to 1.
 			term = 1; 
 		if (courseInstructor != null)
 			instructorScheduleID = (courseInstructor.getSchedule()) + term;
@@ -718,7 +780,7 @@ public class Window {
 		for (int y = 0; y < 9; y++) {
 			for (int x = 0; x < 5; x++) {
 				for (int z = 0; z < 3; z++) {
-					scheduleLabel[x][y][z] = new JLabel();
+					//scheduleLabel[x][y][z] = new JLabel();
 					scheduleLabel[x][y][z].setBounds(labelStartX+(x*100), labelStartY+(z*25)+(y*75), cellWidth, cellHeight);
 					scheduleLabel[x][y][z].setOpaque(true);
 					switch (z) {
@@ -745,7 +807,7 @@ public class Window {
 							lastClickedTop.setBackground(new Color(255, 255, 255, 255));
 							lastClickedMid.setBackground(new Color(255, 255, 255, 255));
 							lastClickedBot.setBackground(new Color(255, 255, 255, 255));
-							UnClickLabels(scheduleLabel);
+							//UnClickLabels(scheduleLabel, tempSchedule);
 							scheduleLabel[innerX][innerY][0].setBackground(new Color(255, 255, 0, 255));
 							scheduleLabel[innerX][innerY][1].setBackground(new Color(255, 255, 0, 255));
 							scheduleLabel[innerX][innerY][2].setBackground(new Color(255, 255, 0, 255));
@@ -759,6 +821,9 @@ public class Window {
 							daySelected = innerX;
 							timeSelected = innerY;
 							//TODO: fix this mess (FillSidePanel by click on schedule block)
+							// 		Uncommenting the line below would make the Right panel fill when any schedule time is clicked.
+							// 		but NONE of the parameters exist in this scope.
+							//		Perhaps a series of getters would work here?
 							//FillSidePanel(this, listCourses, courseName, courseInstructor, courseClassroom, courseHours, courseSelectSchedule, courseApply);							
 						}
 						public void mouseEntered(MouseEvent e) {
@@ -792,17 +857,28 @@ public class Window {
 				}
 			}			
 		}
-		UnClickLabels(scheduleLabel);
-		panel.repaint();
+		UnClickLabels(scheduleLabel, schedule);
 		panel.revalidate();
+		panel.repaint();
 	}
-	private static void UnClickLabels(JLabel[][][] label){
+	private static void UnClickLabels(JLabel[][][] label, Schedule schedule){
 		slotSelected = false;
 		for (int x = 0; x < 5; x++) {
 			for (int y = 0; y < 9; y++) {
+				if (schedule != null) {					
+					if (schedule.hasEvent(x,y)) {
+						label[x][y][0].setText(schedule.getSpecificLesson(x, y).getCourse().getFullName());
+						label[x][y][1].setText(schedule.getSpecificLesson(x, y).getInstructor().getFullName());
+						label[x][y][2].setText(schedule.getSpecificLesson(x, y).getClassroom().getName());					
+					} else {
+						label[x][y][0].setText("");
+						label[x][y][1].setText("");
+						label[x][y][2].setText("");
+					}
+				}
 				for (int z = 0; z < 3; z++) {					
 					isClicked[x][y][z] = false;
-					label[x][y][z].setBackground(new Color(255, 255, 255, 255));
+//					label[x][y][z].setBackground(new Color(255, 255, 255, 255));
 				}
 			}
 		}
