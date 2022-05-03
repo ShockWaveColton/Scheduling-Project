@@ -668,7 +668,8 @@ public class Window {
 	}
 
 
-	public static void DrawSchedule(int schedule_id) {
+	
+	public void DrawSchedule(int schedule_id) {
 		Schedule schedule = null;
 		ArrayList<Schedule> schedules = ObjectManager.getSchedules();
 		for (int i = 0; i < schedules.size(); i++) {
