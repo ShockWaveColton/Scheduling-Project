@@ -1,8 +1,15 @@
 package engine;
 
 public class Main {
+
+	public static Window window;
 	public static void main(String[] args) {
-		new Window(new ObjectManager());
+		window = new Window(new ObjectManager());
+	}
+
+	public static Window getWindow()
+	{
+		return window;
 	}
 }
 

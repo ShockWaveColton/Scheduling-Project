@@ -188,7 +188,7 @@ public class Window {
 						+ "For NSCC IT-Programming Year 2\n"
 						+ "INFT-4000 (Capstone) Project.\n"
 						+ "\n"
-						+ "Copyright © 2021.               Hi Darren! :)");
+						+ "Copyright ï¿½ 2021.               Hi Darren! :)");
 	    	}
 	    });
 		menuBar_Help.add(help_About);
@@ -802,6 +802,8 @@ public class Window {
 					//Workaround to avoid "Local variable defined in an enclosing scope must be final or effectively final"
 					final int innerX = x;
 					final int innerY = y;
+					final Schedule innerSched = schedule;
+					JFrame test = new JFrame("test"); 
 					scheduleLabel[x][y][z].addMouseListener(new MouseAdapter() {
 						public void mousePressed(MouseEvent e) {
 							lastClickedTop.setBackground(new Color(255, 255, 255, 255));
@@ -824,8 +826,18 @@ public class Window {
 							// 		Uncommenting the line below would make the Right panel fill when any schedule time is clicked.
 							// 		but NONE of the parameters exist in this scope.
 							//		Perhaps a series of getters would work here?
-							//FillSidePanel(this, listCourses, courseName, courseInstructor, courseClassroom, courseHours, courseSelectSchedule, courseApply);							
+							
+							JComboBox<Course> listCourses = new JComboBox<Course>();
+							JLabel courseName = new JLabel(innerSched.getSpecificLesson(innerX, innerY).getCourse().getFullName());
+							JLabel courseInstructor = new JLabel(innerSched.getSpecificLesson(innerX, innerY).getInstructor().getFullName());
+							JLabel courseClassroom = new JLabel(innerSched.getSpecificLesson(innerX, innerY).getClassroom().getName());
+							JLabel courseHours = new JLabel(String.valueOf(innerSched.getSpecificLesson(innerX, innerY).getCourse().getHours()));
+							JLabel courseSelectSchedule = new JLabel(String.valueOf(innerSched.getSpecificLesson(innerX, innerY).getCourse().getSection()));
+							JButton courseApply = new JButton();
+							Main.getWindow().FillSidePanel(test, listCourses, courseName, courseInstructor, courseClassroom, courseHours, courseSelectSchedule, courseApply);
+										
 						}
+						
 						public void mouseEntered(MouseEvent e) {
 							if (!(isClicked[innerX][innerY][0] || isClicked[innerX][innerY][1] || isClicked[innerX][innerY][2])) {
 								scheduleLabel[innerX][innerY][0].setBackground(new Color(192, 192, 192, 255));
@@ -848,7 +860,7 @@ public class Window {
 					if (schedule.hasEvent(x,y)) {
 						scheduleLabel[x][y][0].setText(schedule.getSpecificLesson(x, y).getCourse().getFullName());
 						scheduleLabel[x][y][1].setText(schedule.getSpecificLesson(x, y).getInstructor().getFullName());
-						scheduleLabel[x][y][2].setText(schedule.getSpecificLesson(x, y).getClassroom().getName());					
+						scheduleLabel[x][y][2].setText(schedule.getSpecificLesson(x, y).getClassroom().getName());			
 					} else {
 						scheduleLabel[x][y][0].setText("");
 						scheduleLabel[x][y][1].setText("");
