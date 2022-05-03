@@ -1,6 +1,7 @@
 package engine;
 
 public class Main {
+<<<<<<< HEAD
 
 	public static Window window;
 	public static void main(String[] args) {
@@ -9,6 +10,17 @@ public class Main {
 
 	public static Window getWindow()
 	{
+=======
+	
+	public static Window window;
+	
+	public static void main(String[] args) {
+		window = new Window(new ObjectManager());
+	}
+	
+	//Returns the window we created to avoid static abuse, and allow us to use non static functions inside of our drawschedule function
+	public static Window getWindow() {
+>>>>>>> a42ce943cb539e6e3f09580ec0eeae382005c348
 		return window;
 	}
 }

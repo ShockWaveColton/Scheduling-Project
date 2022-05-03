@@ -3,6 +3,7 @@ package objects;
 import java.util.ArrayList;
 
 import engine.FileIO;
+import engine.Main;
 import engine.ObjectManager;
 import engine.Window;
 
@@ -12,9 +13,11 @@ public class Schedule {
 	private String     name;
 	private int        term;
 	private Lesson[][] lessons;
+	private static Window window;
 	
 	// Constructor for new Schedule
 	private Schedule(int ID, String name, int term) {
+		window = Main.getWindow();
 		this.ID = ID;
 		this.name = name;
 		this.term = term;
@@ -23,6 +26,7 @@ public class Schedule {
 	
 	// Constructor (existing schedule):
 	private Schedule(int ID, String name, int term, Lesson[][] schedule) {
+		window = Main.getWindow();
 		this.ID = ID;
 		this.name = name;
 		this.term = term;
@@ -40,6 +44,7 @@ public class Schedule {
 	private void      setLesson(int x, int y, Lesson lesson) {this.lessons[x][y] = lesson; }
 
 	public static int Create(String name, int term, boolean isProgram) {
+
 		int ID = FileIO.CreateSchedule(name, isProgram);
 		Schedule schedule = null;
 		schedule = new Schedule(ID, name, term);
@@ -128,7 +133,7 @@ public class Schedule {
 			for (int i = 0; i < schedules.size(); i++) {
 				//System.out.println(schedules.get(i).getScheduleName() + " - " + ((Program)object).getName());
 				if (schedules.get(i).getScheduleName().equals(((Program)object).getName()) && schedules.get(i).getTerm() == semester) {
-					Window.DrawSchedule(schedules.get(i).getID());
+					window.DrawSchedule(schedules.get(i).getID());
 					break;
 				}
 			}					
@@ -139,7 +144,7 @@ public class Schedule {
 				//System.out.println("(" + schedules.get(i).getScheduleName() + "_" + schedules.get(i).getTerm() + ") - (" + ((Instructor)object).getW_Number() + "_" + semester + ")");
 				if (schedules.get(i).getScheduleName().equals(((Instructor)object).getW_Number())) {
 					if (schedules.get(i).getTerm() == semester) {
-						Window.DrawSchedule(schedules.get(i).getID());	
+						window.DrawSchedule(schedules.get(i).getID());	
 						break;						
 					}
 				}
