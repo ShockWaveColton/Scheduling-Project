@@ -93,6 +93,7 @@ public class Window {
 		    		menuBar_Edit.setEnabled(false);
 	    	}
 	    });
+		JMenuItem file_export = new JMenuItem("Export");
 		menuBar_File.add(file_new);
 		JMenuItem file_load = new JMenuItem("Load");
 		file_load.addActionListener(new ActionListener() {
@@ -101,18 +102,22 @@ public class Window {
 		    	ObjectManager.ClearData();
 		    	if (FileIO.LoadDatabase() == 0) {
 		    		menuBar_Edit.setEnabled(true);
+		    		file_export.setEnabled(true);
+		    		
 		    		reloadDropDowns();
 		    	} else
 		    		menuBar_Edit.setEnabled(false);
 	    	}
 	    });
 		menuBar_File.add(file_load);
-		JMenuItem file_export = new JMenuItem("Export");
 		file_export.setEnabled(false);
 		file_export.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent arg0) {
 		    	//TO-DO: ADD EXPORT CSV FUNCTIONALITY.
+		    	//hide when not in use and show when needed
+		    	
+		    	FileIO.exportSchedule();
 		    }
 	    });
 		menuBar_File.add(file_export);
@@ -188,7 +193,7 @@ public class Window {
 						+ "For NSCC IT-Programming Year 2\n"
 						+ "INFT-4000 (Capstone) Project.\n"
 						+ "\n"
-						+ "Copyright © 2021.               Hi Darren! :)");
+						+ "Copyright ï¿½ 2021.               Hi Darren! :)");
 	    	}
 	    });
 		menuBar_Help.add(help_About);
