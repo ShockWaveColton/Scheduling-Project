@@ -51,6 +51,16 @@ public class Window {
 	private static JLabel lastClickedTop = new JLabel();
 	private static JLabel lastClickedMid = new JLabel();
 	private static JLabel lastClickedBot = new JLabel();
+	private static JFrame window = new JFrame("NSCC Scheduling Protoype");
+	private static JComboBox<Course> listCourses = new JComboBox<Course>();
+	private static JLabel  courseDetails        = new JLabel("Course Details:");
+	private static JLabel  courseName           = new JLabel("Name:");
+	private static JLabel  courseInstructor     = new JLabel("Instructor:");
+	private static JLabel  courseClassroom      = new JLabel("Classroom:");
+	private static JLabel  courseHours          = new JLabel("Hours:");
+	private static JLabel  courseApplyLabel     = new JLabel("<html><b>Select a Day/Time<br>to add course to schedule.");
+	private static JButton courseApply          = new JButton("Apply");
+	private static JButton courseDelete		 	= new JButton("Delete");
 	
 	private static int courseProgramValue = 0; // Global so I can get it out of the button ActionListeners.
 	private static int selectedTerm       = 0; // Global so it can be accessed by programs and instructors functions.
@@ -70,7 +80,6 @@ public class Window {
 			}
 		}
 //		this.objectManager = objectManager;
-		JFrame window = new JFrame("NSCC Scheduling Protoype");
 		window.setSize(635, 840);
 		window.setLocationRelativeTo(null);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -210,15 +219,7 @@ public class Window {
 		tabbedPane.add("Programs", programPanel);
 		JLabel listCoursesLabel = new JLabel("Courses:");
 		listCoursesLabel.setBounds    (470, 30, 100, 20);
-				
-		JLabel  courseDetails        = new JLabel("Course Details:");
-		JLabel  courseName           = new JLabel("Name:");
-		JLabel  courseInstructor     = new JLabel("Instructor:");
-		JLabel  courseClassroom      = new JLabel("Classroom:");
-		JLabel  courseHours          = new JLabel("Hours:");
-		JLabel  courseApplyLabel     = new JLabel("<html><b>Select a Day/Time<br>to add course to schedule.");
-		JButton courseApply          = new JButton("Apply");
-		JButton courseDelete		 = new JButton("Delete");
+		
 		courseDetails.setBounds       (630, 60,  100, 40);
 		courseName.setBounds          (630, 100, 200, 45);
 		courseInstructor.setBounds    (630, 150, 200, 40);
@@ -229,7 +230,6 @@ public class Window {
 		courseDelete.setBounds        (630, 370, 180, 40);
 
 		//This is a special comboBox for adding courses (thus everything) to the selected schedule.
-		JComboBox<Course> listCourses = new JComboBox<Course>();
 		listCourses.setRenderer(new ListCellRendererOverride());
 		listCourses.setSelectedIndex(-1);
 		listCourses.setBounds(470, 55, 140, 25);
@@ -670,7 +670,8 @@ public class Window {
 
 	
 	public void DrawSchedule(int schedule_id) {
-		Schedule schedule = null;
+		Schedule schedule = null; 
+		
 		ArrayList<Schedule> schedules = ObjectManager.getSchedules();
 		for (int i = 0; i < schedules.size(); i++) {
 			if (schedules.get(i).getID() == schedule_id)
@@ -804,13 +805,13 @@ public class Window {
 					final int innerX = x;
 					final int innerY = y;
 					final Schedule innerSched = schedule;
-					JFrame test = new JFrame("test"); 
+		
 					scheduleLabel[x][y][z].addMouseListener(new MouseAdapter() {
 						public void mousePressed(MouseEvent e) {
 							lastClickedTop.setBackground(new Color(255, 255, 255, 255));
 							lastClickedMid.setBackground(new Color(255, 255, 255, 255));
 							lastClickedBot.setBackground(new Color(255, 255, 255, 255));
-							//UnClickLabels(scheduleLabel, tempSchedule);
+							UnClickLabels(scheduleLabel, innerSched);
 							scheduleLabel[innerX][innerY][0].setBackground(new Color(255, 255, 0, 255));
 							scheduleLabel[innerX][innerY][1].setBackground(new Color(255, 255, 0, 255));
 							scheduleLabel[innerX][innerY][2].setBackground(new Color(255, 255, 0, 255));
@@ -823,20 +824,12 @@ public class Window {
 							slotSelected = true;
 							daySelected = innerX;
 							timeSelected = innerY;
-							//TODO: fix this mess (FillSidePanel by click on schedule block)
-							// 		Uncommenting the line below would make the Right panel fill when any schedule time is clicked.
-							// 		but NONE of the parameters exist in this scope.
-							//		Perhaps a series of getters would work here?
+								
+		FillSidePanel(window, listCourses, courseName, courseInstructor, courseClassroom, courseHours, courseApplyLabel, courseApply);
 							
-							JComboBox<Course> listCourses = new JComboBox<Course>();
-							JLabel courseName = new JLabel(innerSched.getSpecificLesson(innerX, innerY).getCourse().getFullName());
-							JLabel courseInstructor = new JLabel(innerSched.getSpecificLesson(innerX, innerY).getInstructor().getFullName());
-							JLabel courseClassroom = new JLabel(innerSched.getSpecificLesson(innerX, innerY).getClassroom().getName());
-							JLabel courseHours = new JLabel(String.valueOf(innerSched.getSpecificLesson(innerX, innerY).getCourse().getHours()));
-							JLabel courseSelectSchedule = new JLabel(String.valueOf(innerSched.getSpecificLesson(innerX, innerY).getCourse().getSection()));
-							JButton courseApply = new JButton();
-							Main.getWindow().FillSidePanel(test, listCourses, courseName, courseInstructor, courseClassroom, courseHours, courseSelectSchedule, courseApply);
-										
+							
+
+
 						}
 						
 						public void mouseEntered(MouseEvent e) {
@@ -861,7 +854,7 @@ public class Window {
 					if (schedule.hasEvent(x,y)) {
 						scheduleLabel[x][y][0].setText(schedule.getSpecificLesson(x, y).getCourse().getFullName());
 						scheduleLabel[x][y][1].setText(schedule.getSpecificLesson(x, y).getInstructor().getFullName());
-						scheduleLabel[x][y][2].setText(schedule.getSpecificLesson(x, y).getClassroom().getName());			
+						scheduleLabel[x][y][2].setText(schedule.getSpecificLesson(x, y).getClassroom().getName());		
 					} else {
 						scheduleLabel[x][y][0].setText("");
 						scheduleLabel[x][y][1].setText("");
@@ -870,7 +863,7 @@ public class Window {
 				}
 			}			
 		}
-		UnClickLabels(scheduleLabel, schedule);
+		//UnClickLabels(scheduleLabel, schedule);
 		panel.revalidate();
 		panel.repaint();
 	}
