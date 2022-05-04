@@ -315,6 +315,8 @@ public class Window {
 			}
 		});
 		
+		
+		
 		// Pressing the 'Apply' button to add course to schedules:
 		courseApply.addActionListener(new ActionListener() {
 			@Override
@@ -351,6 +353,9 @@ public class Window {
 				}
 			}
 		});
+		
+		
+		
 		courseDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

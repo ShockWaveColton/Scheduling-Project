@@ -30,3 +30,9 @@ public class Main {
  *  	Of each instructor and program by term/semester.
  *  	Maybe include a list of courses with unscheduled hours, the sky is the limit. 
  */
+
+
+/*
+ *  Issues found by students:
+ *  
+ */
