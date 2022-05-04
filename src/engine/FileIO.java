@@ -1,6 +1,8 @@
 package engine;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -23,6 +25,8 @@ public class FileIO {
 	private static boolean fileLoaded; 
 	private static Connection conn = null; 
 	private static Statement stmt = null;
+	
+	private final static String csvPath = "schedule.csv";
 
 	private static void Connect(String fileName) throws ClassNotFoundException, SQLException {
 		if (conn == null) {
@@ -576,6 +580,45 @@ public class FileIO {
 			Disconnect();
 		}		
 	}
+	
+	// Export the schedule to a csv file
+	public static void exportSchedule() {
+		try {
+			Connect(databaseName);
+			
+			String sql = "SELECT * FROM schedules";
+			
+			ResultSet result = stmt.executeQuery(sql);
+			
+			BufferedWriter writer = new BufferedWriter(new FileWriter(csvPath));
+			
+			writer.write("schedule_id,schedule_name,schedule_term");
+			
+			while(result.next()) {
+				int schedule_id = result.getInt("schedule_id");
+				String schedule_name = result.getString("schedule_name");
+				int schedule_term = result.getInt("schedule_term");
+				
+                String line = String.format("\"%d\",%s,%d",
+                        schedule_id, schedule_name, schedule_term);
+                
+                writer.newLine();
+                
+                writer.write(line);
+                
+			}
+			
+			writer.close();
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Something went wrong.");
+		}finally {
+			Disconnect();
+			JOptionPane.showMessageDialog(null, "File exported succesfully!");
+		}
+	}
+	
 	// Deleting a lesson from a schedule.
 	public static void updateSchedule(int ID, String scheduleLocation) {
 		try {
