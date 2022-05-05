@@ -104,6 +104,8 @@ public class Window {
 	    });
 		JMenuItem file_export = new JMenuItem("Export");
 		menuBar_File.add(file_new);
+		JMenuItem file_reports = new JMenuItem("Reports");
+		menuBar_File.add(file_reports);
 		JMenuItem file_load = new JMenuItem("Load");
 		file_load.addActionListener(new ActionListener() {
 		    @Override
@@ -112,6 +114,7 @@ public class Window {
 		    	if (FileIO.LoadDatabase() == 0) {
 		    		menuBar_Edit.setEnabled(true);
 		    		file_export.setEnabled(true);
+		    		file_reports.setEnabled(true);
 		    		
 		    		reloadDropDowns();
 		    	} else
@@ -119,6 +122,13 @@ public class Window {
 	    	}
 	    });
 		menuBar_File.add(file_load);
+		file_reports.setEnabled(false);
+		file_reports.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent arg0) {
+		   
+		    }
+		});
+		
 		file_export.setEnabled(false);
 		file_export.addActionListener(new ActionListener() {
 		    @Override
@@ -130,6 +140,7 @@ public class Window {
 		    }
 	    });
 		menuBar_File.add(file_export);
+	
 		JMenuItem file_quit = new JMenuItem("Quit");
 		file_quit.addActionListener(new ActionListener() {
 		    @Override
@@ -138,6 +149,8 @@ public class Window {
 	    	}
 	    });	
 		menuBar_File.add(file_quit);
+		
+		
 		menuBar.add(menuBar_File);
 		menuBar_Edit.setEnabled(false);			
 		JMenuItem edit_Programs = new JMenuItem("Manage Programs");
