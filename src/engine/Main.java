@@ -8,7 +8,6 @@ public class Main {
 	
 	public static void main(String[] args) {
 		window = new Window(new ObjectManager());
-		
 	}
 	
 	//Returns the window we created to avoid static abuse, and allow us to use non static functions inside of our drawschedule function

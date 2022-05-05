@@ -5,13 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import engine.Main;
 import engine.ObjectManager;
+import engine.Window;
 
 public class Report {
 
 	int term;
 	
-	HashMap<Instructor, Integer> instructorHours = new HashMap<Instructor, Integer>();
+	private HashMap<Instructor, Integer> instructorHours = new HashMap<Instructor, Integer>();
+	
+	private HashMap<Program, Integer> programHours = new HashMap<Program, Integer>();
 	
 	//Adds instructors to instructor hours
 	private void initializeInstructors() {
@@ -22,10 +26,19 @@ public class Report {
 		
 	}
 	
+	private void initializePrograms() {
+		
+		for(Program program : ObjectManager.getPrograms()) {
+			programHours.put(program,0);
+		}
+		
+	}
+	
 	public Report(int term) {
 		this.term = term;
 		
 		initializeInstructors();
+		initializePrograms();
 		createReport();
 		
 	}
@@ -37,6 +50,9 @@ public class Report {
 			calculateHours(instructor);
 		}
 		
+		for(Program program : programHours.keySet()) {
+			calculateHoursForProgram(program);
+		}
 		
 	}
 	
@@ -52,7 +68,34 @@ public class Report {
 		return instructorHours.get(instructor);
 	}
 	
+	
+	public int getHoursForProgram(Program program) {
+		return programHours.get(program);
+	}
+	
+	//Calculate hours for the program
+	private int calculateHoursForProgram(Program program) {
+		int programHrs = 0;
+		int tempHours;
+		Window mainWindow = Main.getWindow();
+		
+		List<Course> courses = ObjectManager.getCourses();
+		
+		for(Course course : courses) {
+			if(course.getProgram() == program.getID() && course.getSemester() == this.term) {
+				 tempHours = mainWindow.CalculateScheduledCourseHours(course);
+				 programHrs += tempHours;
+			}
+		}
+		
+		programHours.put(program, programHrs);
+		
+		int hours = programHours.get(program);
+		
+		return hours;
 
+	}
+		
 	//Calculate hours for instructor
 	private int calculateHours(Instructor instructor) {
 		

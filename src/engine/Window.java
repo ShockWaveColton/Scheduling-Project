@@ -109,23 +109,7 @@ public class Window {
 		
 		
 		JMenuItem file_reports = new JMenuItem("Reports");
-		file_reports.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent arg0) {
-		    	//Creates a report for semester 1
-		    	Report report = new Report(1);
-		    	
-		    	//Just print out instructors in console for now
-		    	for(Instructor currentInstructor : ObjectManager.getInstructors()) {
-		    		System.out.println(currentInstructor.getFullName() + " : " + (int)Math.ceil(report.getHoursForInstructor(currentInstructor)) / 2);
-		    	}
-		    	
-		    	
-		    	
-		    	
-	    	}
-	    });
-		
+
 		
 		menuBar_File.add(file_reports);
 		
@@ -148,10 +132,21 @@ public class Window {
 		menuBar_File.add(file_load);
 		file_reports.setEnabled(false);
 		file_reports.addActionListener(new ActionListener() {
+		    @Override
 		    public void actionPerformed(ActionEvent arg0) {
-		   
-		    }
-		});
+		    	//Creates a report for semester 1
+		    	Report report = new Report(1);
+		    	
+		    	//Just print out instructors in console for now
+		    	for(Instructor currentInstructor : ObjectManager.getInstructors()) {
+		    		System.out.println(currentInstructor.getFullName() + " : " + (int)Math.ceil(report.getHoursForInstructor(currentInstructor) / 2));
+		    	}
+		    	
+		    	
+		    	
+		    	
+	    	}
+	    });
 		
 		file_export.setEnabled(false);
 		file_export.addActionListener(new ActionListener() {
@@ -561,6 +556,8 @@ public class Window {
 		}
 		DrawSchedule(scheduleID);
 	}
+	
+
 
 	protected void FillSidePanel(JFrame window, JComboBox<Course> listCourses, JLabel courseName, JLabel courseInstructor, JLabel courseClassroom, JLabel courseHours, JLabel courseSelectSchedule, JButton courseApply) {
 		if (listCourses.getSelectedIndex() > -1) {
@@ -684,7 +681,7 @@ public class Window {
 		return courseHours;
 	}
 	
-	private int CalculateScheduledCourseHours(Course course) {
+	public int CalculateScheduledCourseHours(Course course) {
 		int courseScheduledHours = 0;
 		int courseInstructorID = course.getInstructor();
 		Instructor courseInstructor = null;
