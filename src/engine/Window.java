@@ -49,6 +49,7 @@ public class Window {
 	private static DefaultComboBoxModel<Classroom> classroomsModel = new DefaultComboBoxModel<Classroom>();
 	private static DefaultComboBoxModel<Course> coursesModel = new DefaultComboBoxModel<Course>();
 	
+	//Side panel objects
 	private static JLabel lastClickedTop = new JLabel();
 	private static JLabel lastClickedMid = new JLabel();
 	private static JLabel lastClickedBot = new JLabel();
@@ -382,6 +383,8 @@ public class Window {
 								String instructorName = instructor.getFullName(); 
 								confirmOverwrite = JOptionPane.showConfirmDialog(null, instructorName + " is teaching another class is here. Overwrite?", "Collision Detected", JOptionPane.YES_NO_OPTION);
 								if (confirmOverwrite == JOptionPane.YES_OPTION) {
+									//Does not remove untill program is restarted (only changes database)
+									schedule.DeleteScheduledEvent(daySelected, timeSelected);
 									AddToSchedule(course, term);
 									break;
 								}
