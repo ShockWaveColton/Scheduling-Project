@@ -36,6 +36,7 @@ import objects.Course;
 import objects.Instructor;
 import objects.Lesson;
 import objects.Program;
+import objects.Report;
 import objects.Schedule;
 
 public class Window {
@@ -104,8 +105,30 @@ public class Window {
 	    });
 		JMenuItem file_export = new JMenuItem("Export");
 		menuBar_File.add(file_new);
+		
+		
 		JMenuItem file_reports = new JMenuItem("Reports");
+		file_reports.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent arg0) {
+		    	//Creates a report for semester 1
+		    	Report report = new Report(1);
+		    	
+		    	//Just print out instructors in console for now
+		    	for(Instructor currentInstructor : ObjectManager.getInstructors()) {
+		    		System.out.println(currentInstructor.getFullName() + " : " + (int)Math.ceil(report.getHoursForInstructor(currentInstructor)) / 2);
+		    	}
+		    	
+		    	
+		    	
+		    	
+	    	}
+	    });
+		
+		
 		menuBar_File.add(file_reports);
+		
+		
 		JMenuItem file_load = new JMenuItem("Load");
 		file_load.addActionListener(new ActionListener() {
 		    @Override
