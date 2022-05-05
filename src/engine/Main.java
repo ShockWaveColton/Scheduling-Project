@@ -1,11 +1,14 @@
 package engine;
 
+import objects.Report;
+
 public class Main {
 	
 	public static Window window;
 	
 	public static void main(String[] args) {
 		window = new Window(new ObjectManager());
+		
 	}
 	
 	//Returns the window we created to avoid static abuse, and allow us to use non static functions inside of our drawschedule function
@@ -34,5 +37,8 @@ public class Main {
 
 /*
  *  Issues found by students:
+ *  
+ *  - Calculating the hours of an instructor causes it to do it twice
+ *     Currently dividing final hours by 2 to get an estimate. I would like help with a fix on this
  *  
  */
