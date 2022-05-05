@@ -360,6 +360,7 @@ public class Window {
 								String instructorName = instructor.getFullName(); 
 								confirmOverwrite = JOptionPane.showConfirmDialog(null, instructorName + " is teaching another class is here. Overwrite?", "Collision Detected", JOptionPane.YES_NO_OPTION);
 								if (confirmOverwrite == JOptionPane.YES_OPTION) {
+									//Does not remove untill program is restarted (only changes database)
 									schedule.DeleteScheduledEvent(daySelected, timeSelected);
 									AddToSchedule(course, term);
 									break;
