@@ -136,7 +136,7 @@ public class Window {
 		    public void actionPerformed(ActionEvent arg0) {
 		    	//Creates a report for semester 1
 		    	Report report = new Report(1);
-		    	
+		    	SecondWindow myWindow = new SecondWindow();
 		    	//Just print out instructors in console for now
 		    	for(Instructor currentInstructor : ObjectManager.getInstructors()) {
 		    		System.out.println(currentInstructor.getFullName() + " : " + (int)Math.ceil(report.getHoursForInstructor(currentInstructor) / 2));
