@@ -9,6 +9,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
+import objects.Instructor;
+import objects.Program;
+import objects.Report;
+
 public class SecondWindow extends JFrame implements ActionListener{
 	JFrame SWindow = new JFrame();
 	JFrame InstructorWindow = new JFrame();
@@ -41,10 +45,68 @@ public class SecondWindow extends JFrame implements ActionListener{
 	private JButton Return = new JButton("Return");
 	private JButton Return2 = new JButton("Return");
 	
+	
+	
 	//**ListModels require filling and setting**
 	
 	
+	public void fillTheList() {
+		for(Instructor instructor : ObjectManager.getInstructors()) {
+			Report report1 = new Report(1);
+			Report report2 = new Report(2);
+			
+			report1.getHoursForInstructor(instructor);
+			report2.getHoursForInstructor(instructor);
+			
+			
+			InstructorListModelSem1.addElement(instructor.getFullName() + ": " + (report1.getHoursForInstructor(instructor) + report2.getHoursForInstructor(instructor)));
+			
+		}
+		
+		for(Instructor instructor : ObjectManager.getInstructors()) {
+			Report report3 = new Report(3);
+			Report report4 = new Report(4);
+			
+			report3.getHoursForInstructor(instructor);
+			report4.getHoursForInstructor(instructor);
+			
+			
+			InstructorListModelSem2.addElement(instructor.getFullName() + ": " + (report3.getHoursForInstructor(instructor) + report4.getHoursForInstructor(instructor)));
+			
+		}
+		
+		
+		for(Program program : ObjectManager.getPrograms()) {
+			Report report1 = new Report(1);
+			Report report2 = new Report(2);
+			
+			report1.getHoursForProgram(program);
+			report2.getHoursForProgram(program);
+			
+			
+			ProgramListModelSem1.addElement(program.getName() + ": " + (report1.getHoursForProgram(program) + report2.getHoursForProgram(program)));
+			
+		}
+		
+		for(Program program : ObjectManager.getPrograms()) {
+			Report report3 = new Report(3);
+			Report report4 = new Report(4);
+			
+			report3.getHoursForProgram(program);
+			report4.getHoursForProgram(program);
+			
+			
+			ProgramListModelSem2.addElement(program.getName() + ": " + (report3.getHoursForProgram(program) + report4.getHoursForProgram(program)));
+			
+		}
+		
+	}
+	
+	
 		SecondWindow(){
+			
+		fillTheList();
+			
 		SWindow.add(Prompt);
 		Prompt.setBounds(75,0,500,50);
 		
