@@ -76,17 +76,23 @@ public class Report {
 	//Calculate hours for the program
 	private int calculateHoursForProgram(Program program) {
 		int programHrs = 0;
-		int tempHours;
+		int tempHours = 0;
 		Window mainWindow = Main.getWindow();
 		
 		List<Course> courses = ObjectManager.getCourses();
 		
-		for(Course course : courses) {
-			if(course.getProgram() == program.getID() && course.getSemester() == this.term) {
-				 tempHours = mainWindow.CalculateScheduledCourseHours(course);
-				 programHrs += tempHours;
+		Schedule programSchedule = mainWindow.getScheduleByID(program.getSchedule());
+		
+		for (int x = 0; x < 5; x++) {
+			for (int y = 0; y < 9; y++) {
+				Lesson tempLesson = programSchedule.getAllLessons()[x][y];
+				
+				if(tempLesson != null) {
+					programHrs++;
+				}
 			}
 		}
+		
 		
 		programHours.put(program, programHrs);
 		
@@ -98,36 +104,30 @@ public class Report {
 		
 	//Calculate hours for instructor
 	private int calculateHours(Instructor instructor) {
+		Window mainWindow = Main.getWindow();
+		Schedule schedule = mainWindow.getScheduleByID(instructor.getSchedule());
 		
-		List<Schedule> schedules = ObjectManager.getSchedules();
-		
-		//Loop through schedules
-		for(Schedule schedule : schedules) {
-
+		//If the term is equal to this term
+		if(schedule.getTerm() == term) {
 			
-			//If the term is equal to this term
-			if(schedule.getTerm() == term) {
-				
-				//Loop through the lessons tables
-				for(Lesson[] lessons : schedule.getAllLessons()) {
+			for (int x = 0; x < 5; x++) {
+				for (int y = 0; y < 9; y++) {
+					Lesson lesson = schedule.getAllLessons()[x][y];
 					
-					//Loop through each individual lesson 
-					for(Lesson lesson : lessons) {
-
-						if(lesson != null && lesson.getInstructor().equals(instructor)) {
-							int oldHours = instructorHours.get(instructor);
-							int newHours = oldHours + 1;
-							
-							instructorHours.put(instructor, newHours);
-							
-						}
+					
+					if(lesson != null && lesson.getInstructor().equals(instructor)) {
+						int oldHours = instructorHours.get(instructor);
+						int newHours = oldHours + 1;
+						
+						instructorHours.put(instructor, newHours);
+						
 					}
-					
 				}
 				
 			}
 			
 		}
+
 		
 		
 		int hours = instructorHours.get(instructor);
