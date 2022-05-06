@@ -25,6 +25,7 @@ public class FileIO {
 	private static boolean fileLoaded; 
 	private static Connection conn = null; 
 	private static Statement stmt = null;
+	private static File fileInUse = null;
 	
 	private final static String csvPath = "schedule.csv";
 
@@ -54,6 +55,7 @@ public class FileIO {
 			JOptionPane.showMessageDialog(null, "Create new database cancelled.");
 		} else {
 	   	 	File tempFile = new File (databaseName);
+				fileInUse = tempFile;
 	   	 	if(tempFile.exists()) {
 	   	 		JOptionPane.showMessageDialog(null, "File '" + databaseName + "' already exists. Select another name.");
 	 		} else {
@@ -191,6 +193,7 @@ public class FileIO {
     	if (selectFile == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             databaseName = file.getName();
+			fileInUse = file;
             try {
                 Connect(file.toString());
     			System.out.println("connected");
@@ -283,6 +286,102 @@ public class FileIO {
 //        	JOptionPane.showMessageDialog(null, "Load file failed. Try again.");
 //        }
     	}
+		return -1;
+	}
+	public static int ReloadDatabase() {
+			File file = fileInUse;
+            databaseName = file.getName();
+            try {
+                Connect(file.toString());
+    			System.out.println("connected");
+                ResultSet query;
+                // get all schedules from database, pass each row in to Schedules builder.
+
+                query = stmt.executeQuery("SELECT * FROM schedules ORDER BY schedule_id ASC");
+                while ( query.next()) {
+                	int ID      = query.getInt   ("schedule_id");
+                	String name = query.getString("schedule_name");
+                	int term    = query.getInt   ("schedule_term");
+                	Schedule.ReadPass1(ID, name, term);
+                }
+                // get all programs from database, pass each row in to Program builder.
+                query = stmt.executeQuery("SELECT * FROM programs ORDER BY program_id ASC");
+                while ( query.next()) {
+                	int    ID    = query.getInt   ("program_id");
+                	String name  = query.getString("program_name");
+                	int schedule = query.getInt   ("program_schedule");
+                	Program.Read(ID, name, schedule);
+                }
+                // get all instructors from database, pass row in to Instructor builder.
+                query = stmt.executeQuery("SELECT * FROM instructors ORDER BY instructor_firstName ASC, instructor_lastName ASC, instructor_wNumber ASC");
+                while ( query.next()) {
+                	int ID           = query.getInt   ("instructor_id");
+                	String wNumber   = query.getString("instructor_wNumber");
+                	String firstName = query.getString("instructor_firstName"); 
+                	String lastName  = query.getString("instructor_lastName");
+                	String phone     = query.getString("instructor_phone");
+                	String email     = query.getString("instructor_email");
+                	int schedule     = query.getInt   ("instructor_schedule");
+                	Instructor.Read(ID, wNumber, firstName, lastName, phone, email, schedule);
+                }
+                // get all classrooms from database, pass row in to classroom builder.
+                query = stmt.executeQuery("SELECT * FROM classrooms ORDER BY classroom_wing ASC, classroom_number ASC");
+                while ( query.next()) {
+                	int ID    = query.getInt   ("classroom_id");
+                	String wing   = query.getString("classroom_wing"); 
+                	String number = query.getString("classroom_number");
+                	int labType   = query.getInt   ("classroom_labType");
+                	Classroom.Read(ID, wing, number, labType);
+                }
+                // get all courses from database, pass row in to courses builder.
+                query = stmt.executeQuery("SELECT * FROM courses ORDER BY course_code ASC, course_section ASC");
+                while ( query.next()) {
+                	int ID = query.getInt        ("course_id");
+                	int labType = query.getInt   ("course_lab");
+                	String code = query.getString("course_code");  
+                	String name = query.getString("course_name");
+                	int hours = query.getInt     ("course_hours");
+                	int section = query.getInt   ("course_section");
+                	int program = query.getInt   ("course_program");
+                	int semester = query.getInt  ("course_semester");
+                	int classroom = query.getInt ("course_classroom");
+                	int instructor = query.getInt("course_instructor");
+                	Course.Read(ID, code, name, section, hours, labType, program, semester, instructor, classroom);
+                }
+                query = stmt.executeQuery("SELECT * FROM lessons ORDER BY lesson_id ASC");
+                while ( query.next()) {
+                	int ID   = query.getInt      ("lesson_id");
+                	int course = query.getInt    ("lesson_course");
+                	int instructor = query.getInt("lesson_instructor");
+                	int classroom = query.getInt ("lesson_classroom");
+                	Lesson.Read(ID, course, instructor, classroom);
+                }
+                query = stmt.executeQuery("SELECT * FROM schedules ORDER BY schedule_id ASC");
+                while ( query.next()) {
+                	int ID      = query.getInt   ("schedule_id");
+                	int scheduleData[][] = new int[5][9]; //Easier to grab 45 lessons in a loop:
+                	// I don't like hardcoding for loops like this, but I don't have a variable
+                	// for dimensions (since every week is 5 days x 9 hours).
+                	for (int x = 0; x < 5; x++) {
+                    	for (int y = 0; y < 9; y++) {
+                    		scheduleData[x][y] = query.getInt("schedule_"+(x+1)+(y+1));
+                    	}
+                	}
+                	Schedule.ReadPass2(ID, scheduleData);
+                }                
+ 	   	 		fileLoaded = true;
+                return 0;
+            } catch (Exception e) {
+            	e.printStackTrace();
+            	JOptionPane.showMessageDialog(null, "Something went wrong.");
+    		} finally {
+    			Disconnect();
+    			System.out.println("disconnected.");
+    		}
+//        } else {
+//        	JOptionPane.showMessageDialog(null, "Load file failed. Try again.");
+//        }
+    	
 		return -1;
 	}
 	public static int CreateProgram(String name, int schedule_id) {
