@@ -1,5 +1,7 @@
 package engine;
 
+import objects.Report;
+
 public class Main {
 	
 	public static Window window;
@@ -35,4 +37,7 @@ public class Main {
 /*
  *  Issues found by students:
  *  
+ *  - Calculating the hours of an instructor causes it to do it twice
+ *     Currently dividing final hours by 2 to get an estimate. I would like help with a fix on this
+ *  - Not all courses may show from the dropdown in programs, seems to be affected by which instructor you selected before
  */

@@ -36,6 +36,7 @@ import objects.Course;
 import objects.Instructor;
 import objects.Lesson;
 import objects.Program;
+import objects.Report;
 import objects.Schedule;
 
 public class Window {
@@ -48,6 +49,7 @@ public class Window {
 	private static DefaultComboBoxModel<Classroom> classroomsModel = new DefaultComboBoxModel<Classroom>();
 	private static DefaultComboBoxModel<Course> coursesModel = new DefaultComboBoxModel<Course>();
 	
+	//Side panel objects
 	private static JLabel lastClickedTop = new JLabel();
 	private static JLabel lastClickedMid = new JLabel();
 	private static JLabel lastClickedBot = new JLabel();
@@ -104,6 +106,14 @@ public class Window {
 	    });
 		JMenuItem file_export = new JMenuItem("Export");
 		menuBar_File.add(file_new);
+		
+		
+		JMenuItem file_reports = new JMenuItem("Reports");
+
+		
+		menuBar_File.add(file_reports);
+		
+		
 		JMenuItem file_load = new JMenuItem("Load");
 		file_load.addActionListener(new ActionListener() {
 		    @Override
@@ -112,6 +122,7 @@ public class Window {
 		    	if (FileIO.LoadDatabase() == 0) {
 		    		menuBar_Edit.setEnabled(true);
 		    		file_export.setEnabled(true);
+		    		file_reports.setEnabled(true);
 		    		
 		    		reloadDropDowns();
 		    	} else
@@ -119,6 +130,24 @@ public class Window {
 	    	}
 	    });
 		menuBar_File.add(file_load);
+		file_reports.setEnabled(false);
+		file_reports.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent arg0) {
+		    	//Creates a report for semester 1
+		    	Report report = new Report(1);
+		    	SecondWindow myWindow = new SecondWindow();
+		    	//Just print out instructors in console for now
+		    	for(Instructor currentInstructor : ObjectManager.getInstructors()) {
+		    		System.out.println(currentInstructor.getFullName() + " : " + report.getHoursForInstructor(currentInstructor));
+		    	}
+		    	
+		    	
+		    	
+		    	
+	    	}
+	    });
+		
 		file_export.setEnabled(false);
 		file_export.addActionListener(new ActionListener() {
 		    @Override
@@ -130,6 +159,7 @@ public class Window {
 		    }
 	    });
 		menuBar_File.add(file_export);
+	
 		JMenuItem file_quit = new JMenuItem("Quit");
 		file_quit.addActionListener(new ActionListener() {
 		    @Override
@@ -138,6 +168,8 @@ public class Window {
 	    	}
 	    });	
 		menuBar_File.add(file_quit);
+		
+		
 		menuBar.add(menuBar_File);
 		menuBar_Edit.setEnabled(false);			
 		JMenuItem edit_Programs = new JMenuItem("Manage Programs");
@@ -326,7 +358,6 @@ public class Window {
 		courseApply.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//Check to see if any other instructor is using the same room at the same time:
 				ArrayList<Instructor> instructors = ObjectManager.getInstructors();
 				Course course = (Course)listCourses.getSelectedItem();
 				int instructorID = course.getInstructor();
@@ -334,8 +365,9 @@ public class Window {
 				int semester = listSemesters.getValue(); 
 				if (semester == 2 || semester == 4)
 					term = 1; // Term 1 is the lowest, so only add 1 if term 2 (semester 2 or 4) is selected.
-				int confirmOverwrite = -1;
-				for (int i = 0; i < instructors.size(); i++) {
+				int confirmOverwrite = -1; //Set to false, 0 is true
+				//Check to see if any other instructor is using the same room at the same time:
+				for (int i = 0; i < instructors.size(); i++) { //Loop through list of instructors
 					Instructor instructor = instructors.get(i);
 					if (instructor.getID() != instructorID) { // Do not check the schedule of the selected course's instructor.
 						Schedule schedule = ObjectManager.getSchedules().get(instructor.getSchedule()-1 + term); // -1 for 0-based index.						
@@ -344,9 +376,14 @@ public class Window {
 							Classroom courseClassroom = ObjectManager.getClassrooms().get(course.getClassroom());
 							if (scheduledLesson.getClassroom() == courseClassroom) { // Classrooms match, conflict confirmed. Alert, and ask to overwrite.
 								String instructorName = instructor.getFullName(); 
+								//Popup dialog with instructors name
 								confirmOverwrite = JOptionPane.showConfirmDialog(null, instructorName + " is teaching another class is here. Overwrite?", "Collision Detected", JOptionPane.YES_NO_OPTION);
 								if (confirmOverwrite == JOptionPane.YES_OPTION) {
+									//Does not remove untill program is restarted (only changes database)
+									schedule.DeleteScheduledEvent(daySelected, timeSelected);
 									AddToSchedule(course, term);
+									ObjectManager.ClearData();
+									FileIO.ReloadDatabase();
 									break;
 								}
 							} 
@@ -526,6 +563,8 @@ public class Window {
 		}
 		DrawSchedule(scheduleID);
 	}
+	
+
 
 	protected void FillSidePanel(JFrame window, JComboBox<Course> listCourses, JLabel courseName, JLabel courseInstructor, JLabel courseClassroom, JLabel courseHours, JLabel courseSelectSchedule, JButton courseApply) {
 		if (listCourses.getSelectedIndex() > -1) {
@@ -535,12 +574,14 @@ public class Window {
 			String courseInstructorText = GetCourseInstructorName(course); // Needs to be a function because instructormodel doesn't match sorted list
 			String courseClassroomText =  GetCourseClassroomName(course); // Same as above.
 			String courseHoursText =      CalculateCourseHours(course);
+			//Set text of labels
 			courseName.setText      ("<html>Name:<br>"       + courseNameText);
 			courseInstructor.setText("<html>Instructor:<br>" + courseInstructorText);
 			courseClassroom.setText ("<html>Classroom:<br>"  + courseClassroomText);
 			courseHours.setText     ("<html>Hours:<br>Scheduled / Total (remaining):<br>" + courseHoursText);
 			String applyDayString = "";
 			String applyTimeString = "";
+			//Find out day of week (x) and if on that day find out time (y) then set day and time strings
 			if (slotSelected) {
 				for (int x = 0; x < 5; x++) {
 					for (int y = 0; y < 9; y++) {
@@ -598,12 +639,15 @@ public class Window {
 						}
 					}
 				}
+			//if block is selected
 				courseApply.setVisible(true);
 				courseSelectSchedule.setVisible(false);
+			//if block not selected
 			} else {
 				courseApply.setVisible(false);
 				courseSelectSchedule.setVisible(true);						
 			}
+		//If course from dropdown is not blank
 			courseApply.setText("<html>Apply " + courseCodeText + "<br> to " + applyDayString + " at " + applyTimeString + ".");
 			window.setSize(845, 840);
 		} else {
@@ -649,7 +693,7 @@ public class Window {
 		return courseHours;
 	}
 	
-	private int CalculateScheduledCourseHours(Course course) {
+	public int CalculateScheduledCourseHours(Course course) {
 		int courseScheduledHours = 0;
 		int courseInstructorID = course.getInstructor();
 		Instructor courseInstructor = null;
@@ -681,7 +725,16 @@ public class Window {
 		return 0;
 	}
 
-
+	public Schedule getScheduleByID(int schedule_id) {
+		
+		ArrayList<Schedule> schedules = ObjectManager.getSchedules();
+		for (int i = 0; i < schedules.size(); i++) {
+			if (schedules.get(i).getID() == schedule_id)
+				return ObjectManager.getSchedules().get(i);
+		}
+		
+		return null;
+	}
 	
 	public void DrawSchedule(int schedule_id) {
 		Schedule schedule = null; 
@@ -699,6 +752,7 @@ public class Window {
 		int cellWidth = 100;
 		int cellHeight = 25;
 		
+		//create the top row as days of the week
 		JLabel titleTime = new JLabel(" Time");
 		titleTime.setBounds(10, 95, cellWidth, cellHeight);
 		titleTime.setOpaque(true);
@@ -736,6 +790,7 @@ public class Window {
 		titleFri.setBackground(new Color(255,255,255,255));
 		panel.add(titleFri);
 		
+		//Create the left column
 		JLabel title830 = new JLabel(" 8:30 AM");
 		title830.setBounds(10, 95+25, cellWidth, cellHeight*3);
 		title830.setOpaque(true);
@@ -793,9 +848,10 @@ public class Window {
 
 		int labelStartX = 110;
 		int labelStartY = 120;
-		for (int y = 0; y < 9; y++) {
-			for (int x = 0; x < 5; x++) {
-				for (int z = 0; z < 3; z++) {
+		//Create each block
+		for (int y = 0; y < 9; y++) {//column
+			for (int x = 0; x < 5; x++) {//row
+				for (int z = 0; z < 3; z++) {//for the 3 labels in each block
 					//scheduleLabel[x][y][z] = new JLabel();
 					scheduleLabel[x][y][z].setBounds(labelStartX+(x*100), labelStartY+(z*25)+(y*75), cellWidth, cellHeight);
 					scheduleLabel[x][y][z].setOpaque(true);
@@ -819,16 +875,20 @@ public class Window {
 					final int innerX = x;
 					final int innerY = y;
 					final Schedule innerSched = schedule;
-		
+					
+					//When a block is clicked
 					scheduleLabel[x][y][z].addMouseListener(new MouseAdapter() {
 						public void mousePressed(MouseEvent e) {
+							//Set background color of previously clicked to normal
 							lastClickedTop.setBackground(new Color(255, 255, 255, 255));
 							lastClickedMid.setBackground(new Color(255, 255, 255, 255));
 							lastClickedBot.setBackground(new Color(255, 255, 255, 255));
 							UnClickLabels(scheduleLabel, innerSched);
+							//Make background color of clicked yellow
 							scheduleLabel[innerX][innerY][0].setBackground(new Color(255, 255, 0, 255));
 							scheduleLabel[innerX][innerY][1].setBackground(new Color(255, 255, 0, 255));
 							scheduleLabel[innerX][innerY][2].setBackground(new Color(255, 255, 0, 255));
+
 							lastClickedTop = scheduleLabel[innerX][innerY][0];
 							lastClickedMid = scheduleLabel[innerX][innerY][1];
 							lastClickedBot = scheduleLabel[innerX][innerY][2];
@@ -836,16 +896,16 @@ public class Window {
 							isClicked[innerX][innerY][1] = true;
 							isClicked[innerX][innerY][2] = true;
 							slotSelected = true;
+							//Set class wide variables
 							daySelected = innerX;
 							timeSelected = innerY;
-								
-		FillSidePanel(window, listCourses, courseName, courseInstructor, courseClassroom, courseHours, courseApplyLabel, courseApply);
 							
+							//Refresh side panel with new day and time
+							FillSidePanel(window, listCourses, courseName, courseInstructor, courseClassroom, courseHours, courseApplyLabel, courseApply);
 							
-
-
 						}
 						
+						//Make background grey when mouse enters
 						public void mouseEntered(MouseEvent e) {
 							if (!(isClicked[innerX][innerY][0] || isClicked[innerX][innerY][1] || isClicked[innerX][innerY][2])) {
 								scheduleLabel[innerX][innerY][0].setBackground(new Color(192, 192, 192, 255));
@@ -853,6 +913,7 @@ public class Window {
 								scheduleLabel[innerX][innerY][2].setBackground(new Color(192, 192, 192, 255));
 							}
 						}
+						//Set background color to normal when mouse exits
 						public void mouseExited(MouseEvent e) {
 							if (!(isClicked[innerX][innerY][0] || isClicked[innerX][innerY][1] || isClicked[innerX][innerY][2])) {
 								scheduleLabel[innerX][innerY][0].setBackground(new Color(255, 255, 255, 255));
@@ -877,7 +938,6 @@ public class Window {
 				}
 			}			
 		}
-		//UnClickLabels(scheduleLabel, schedule);
 		panel.revalidate();
 		panel.repaint();
 	}
