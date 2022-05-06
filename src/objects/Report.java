@@ -76,17 +76,23 @@ public class Report {
 	//Calculate hours for the program
 	private int calculateHoursForProgram(Program program) {
 		int programHrs = 0;
-		int tempHours;
+		int tempHours = 0;
 		Window mainWindow = Main.getWindow();
 		
 		List<Course> courses = ObjectManager.getCourses();
 		
-		for(Course course : courses) {
-			if(course.getProgram() == program.getID() && course.getSemester() == this.term) {
-				 tempHours = mainWindow.CalculateScheduledCourseHours(course);
-				 programHrs += tempHours;
+		Schedule programSchedule = mainWindow.getScheduleByID(program.getSchedule());
+		
+		for (int x = 0; x < 5; x++) {
+			for (int y = 0; y < 9; y++) {
+				Lesson tempLesson = programSchedule.getAllLessons()[x][y];
+				
+				if(tempLesson != null) {
+					programHrs++;
+				}
 			}
 		}
+		
 		
 		programHours.put(program, programHrs);
 		

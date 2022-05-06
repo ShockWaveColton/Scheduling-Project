@@ -138,8 +138,8 @@ public class Window {
 		    	Report report = new Report(1);
 		    	SecondWindow myWindow = new SecondWindow();
 		    	//Just print out instructors in console for now
-		    	for(Instructor currentInstructor : ObjectManager.getInstructors()) {
-		    		System.out.println(currentInstructor.getFullName() + " : " + (int)Math.ceil(report.getHoursForInstructor(currentInstructor) / 2));
+		    	for(Program currentProgram : ObjectManager.getPrograms()) {
+		    		System.out.println(currentProgram.getName() + " : " + report.getHoursForProgram(currentProgram));
 		    	}
 		    	
 		    	
@@ -713,7 +713,16 @@ public class Window {
 		return 0;
 	}
 
-
+	public Schedule getScheduleByID(int schedule_id) {
+		
+		ArrayList<Schedule> schedules = ObjectManager.getSchedules();
+		for (int i = 0; i < schedules.size(); i++) {
+			if (schedules.get(i).getID() == schedule_id)
+				return ObjectManager.getSchedules().get(i);
+		}
+		
+		return null;
+	}
 	
 	public void DrawSchedule(int schedule_id) {
 		Schedule schedule = null; 
