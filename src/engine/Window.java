@@ -138,8 +138,8 @@ public class Window {
 		    	Report report = new Report(1);
 		    	SecondWindow myWindow = new SecondWindow();
 		    	//Just print out instructors in console for now
-		    	for(Program currentProgram : ObjectManager.getPrograms()) {
-		    		System.out.println(currentProgram.getName() + " : " + report.getHoursForProgram(currentProgram));
+		    	for(Instructor currentInstructor : ObjectManager.getInstructors()) {
+		    		System.out.println(currentInstructor.getFullName() + " : " + report.getHoursForInstructor(currentInstructor));
 		    	}
 		    	
 		    	
