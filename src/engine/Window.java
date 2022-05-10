@@ -441,6 +441,7 @@ public class Window {
 						else	// Program Selected:
 							schedule = schedules.get(program.getSchedule());
 						schedule.DeleteScheduledEvent(daySelected, timeSelected);
+					
 						// Redraw the schedule of the selected object after the change:
 						if (tabbedPane.getSelectedIndex() == 0) {
 							// Instructor Selected:
