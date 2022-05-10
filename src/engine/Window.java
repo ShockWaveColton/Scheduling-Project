@@ -73,6 +73,7 @@ public class Window {
 	private static int daySelected;
 	private static int timeSelected;
 	
+	
 	public Window(ObjectManager objectManager) {
 		for (int x = 0; x < 5; x++) {
 			for (int y = 0; y < 9; y++) {
@@ -403,7 +404,8 @@ public class Window {
 			public void actionPerformed(ActionEvent e) {
 				// If a schedule block is selected, get the course (via the Lesson), and instructor
 				// Remove the lesson from all appropriate schedules (this is why course is needed).
-				if(slotSelected) {
+				if(slotSelected){
+					int p_id;
 					int scheduleID = 0;
 					Instructor instructor = null;
 					Program program = null;
@@ -442,6 +444,7 @@ public class Window {
 							schedule = schedules.get(program.getSchedule());
 						schedule.DeleteScheduledEvent(daySelected, timeSelected);
 						// Redraw the schedule of the selected object after the change:
+						
 						if (tabbedPane.getSelectedIndex() == 0) {
 							// Instructor Selected:
 							//DELETES ALL TEXT on display and doesn't get deleted. MIGHT need to set

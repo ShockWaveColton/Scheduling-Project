@@ -166,7 +166,7 @@ public class SecondWindow extends JFrame implements ActionListener{
 	
 	}
 		
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent e) { // click event to show or hide windows depending on the window selected.
 			if (e.getSource()==program) {
 				ProgramWindow.setSize(550, 500);
 				ProgramWindow.setLayout(null);
