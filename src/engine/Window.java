@@ -73,6 +73,7 @@ public class Window {
 	private static int daySelected;
 	private static int timeSelected;
 	
+	
 	public Window(ObjectManager objectManager) {
 		for (int x = 0; x < 5; x++) {
 			for (int y = 0; y < 9; y++) {
@@ -379,8 +380,25 @@ public class Window {
 								//Popup dialog with instructors name
 								confirmOverwrite = JOptionPane.showConfirmDialog(null, instructorName + " is teaching another class is here. Overwrite?", "Collision Detected", JOptionPane.YES_NO_OPTION);
 								if (confirmOverwrite == JOptionPane.YES_OPTION) {
-									//Does not remove untill program is restarted (only changes database)
+									//Get program schedule to delete from there too
+									int progID = schedule.getSpecificLesson(daySelected, timeSelected).getCourse().getProgram();
+									Program program = null;
+									for(i = 0; i < listPrograms.getItemCount(); i++)
+									{
+										listPrograms.setSelectedIndex(i);
+										program = (Program)listPrograms.getSelectedItem();
+										if(progID == program.getID())
+										{
+											break;
+										}
+									}
+									//Delete from instructor schedule
 									schedule.DeleteScheduledEvent(daySelected, timeSelected);
+									//Delete from program schedule
+									schedule = getScheduleByID(program.getSchedule());
+									schedule.DeleteScheduledEvent(daySelected, timeSelected);
+									
+									//Add new course to schedule then refresh
 									AddToSchedule(course, term);
 									ObjectManager.ClearData();
 									FileIO.ReloadDatabase();
@@ -403,7 +421,8 @@ public class Window {
 			public void actionPerformed(ActionEvent e) {
 				// If a schedule block is selected, get the course (via the Lesson), and instructor
 				// Remove the lesson from all appropriate schedules (this is why course is needed).
-				if(slotSelected) {
+				if(slotSelected){
+					int p_id;
 					int scheduleID = 0;
 					Instructor instructor = null;
 					Program program = null;
@@ -429,7 +448,6 @@ public class Window {
 					// TODO: Delete lessons from program when instructor selected.
 					//Course course = lesson.getCourse();
 					//int programID = course.getProgram();
-
 					if (tabbedPane.getSelectedIndex() == 1 && lesson != null) // Still need instructor if program was selected
 						instructor = lesson.getInstructor();
 					// Get confirmation that they do infact want to remove the data.
@@ -443,6 +461,7 @@ public class Window {
 						schedule.DeleteScheduledEvent(daySelected, timeSelected);
 					
 						// Redraw the schedule of the selected object after the change:
+						
 						if (tabbedPane.getSelectedIndex() == 0) {
 							// Instructor Selected:
 							//DELETES ALL TEXT on display and doesn't get deleted. MIGHT need to set
