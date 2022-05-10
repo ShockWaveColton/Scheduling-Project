@@ -39,5 +39,8 @@ public class Main {
  *  
  *  - Calculating the hours of an instructor causes it to do it twice
  *     Currently dividing final hours by 2 to get an estimate. I would like help with a fix on this
- *  - Not all courses may show from the dropdown in programs, seems to be affected by which instructor you selected before
+ *  - Not all courses may show from the dropdown in programs, seems to be affected by which instructor you selected before (maybe)
+ *  - Clicking load then clicking X/cancel will break stuff if something is already loaded
+ *  - Does not overwrite yet if you apply a lesson from instructors
+ *  - Loading a new database does not clear the selected items from the dropdown box and seems to create errors
  */

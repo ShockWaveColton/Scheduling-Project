@@ -429,7 +429,7 @@ public class Window {
 					// TODO: Delete lessons from program when instructor selected.
 					//Course course = lesson.getCourse();
 					//int programID = course.getProgram();
-
+					int p_id;
 					if (tabbedPane.getSelectedIndex() == 1 && lesson != null) // Still need instructor if program was selected
 						instructor = lesson.getInstructor();
 					// Get confirmation that they do infact want to remove the data.
