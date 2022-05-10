@@ -380,8 +380,25 @@ public class Window {
 								//Popup dialog with instructors name
 								confirmOverwrite = JOptionPane.showConfirmDialog(null, instructorName + " is teaching another class is here. Overwrite?", "Collision Detected", JOptionPane.YES_NO_OPTION);
 								if (confirmOverwrite == JOptionPane.YES_OPTION) {
-									//Does not remove untill program is restarted (only changes database)
+									//Get program schedule to delete from there too
+									int progID = schedule.getSpecificLesson(daySelected, timeSelected).getCourse().getProgram();
+									Program program = null;
+									for(i = 0; i < listPrograms.getItemCount(); i++)
+									{
+										listPrograms.setSelectedIndex(i);
+										program = (Program)listPrograms.getSelectedItem();
+										if(progID == program.getID())
+										{
+											break;
+										}
+									}
+									//Delete from instructor schedule
 									schedule.DeleteScheduledEvent(daySelected, timeSelected);
+									//Delete from program schedule
+									schedule = getScheduleByID(program.getSchedule());
+									schedule.DeleteScheduledEvent(daySelected, timeSelected);
+									
+									//Add new course to schedule then refresh
 									AddToSchedule(course, term);
 									ObjectManager.ClearData();
 									FileIO.ReloadDatabase();
