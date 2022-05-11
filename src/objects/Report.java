@@ -45,10 +45,14 @@ public class Report {
 	
 	
 	private void createReport() {
-		
-		for(Instructor instructor : instructorHours.keySet()) {
-			calculateHours(instructor);
+		//if statement to avoid errors
+		if(term == 0 || term == 1)
+		{
+			for(Instructor instructor : instructorHours.keySet()) {
+				calculateHours(instructor);
+			}
 		}
+		
 		
 		for(Program program : programHours.keySet()) {
 			calculateHoursForProgram(program);
@@ -105,28 +109,25 @@ public class Report {
 	//Calculate hours for instructor
 	private int calculateHours(Instructor instructor) {
 		Window mainWindow = Main.getWindow();
-		Schedule schedule = mainWindow.getScheduleByID(instructor.getSchedule());
-		
-		//If the term is equal to this term
-		if(schedule.getTerm() == term) {
-			
-			for (int x = 0; x < 5; x++) {
-				for (int y = 0; y < 9; y++) {
-					Lesson lesson = schedule.getAllLessons()[x][y];
+
+		int instructorScheduleID = (instructor.getSchedule()) + term;
+		Schedule schedule = ObjectManager.getSchedules().get(instructorScheduleID - 1);
+		//Loop through schedule
+		for (int x = 0; x < 5; x++) {
+			for (int y = 0; y < 9; y++) {
+				Lesson lesson = schedule.getAllLessons()[x][y];
 					
-					
-					if(lesson != null && lesson.getInstructor().equals(instructor)) {
-						int oldHours = instructorHours.get(instructor);
-						int newHours = oldHours + 1;
+				//See if lesson there and has current instructor teaching it
+				if(lesson != null && lesson.getInstructor().equals(instructor)) {
+					int oldHours = instructorHours.get(instructor);
+					int newHours = oldHours + 1;
 						
-						instructorHours.put(instructor, newHours);
+					instructorHours.put(instructor, newHours);
 						
-					}
 				}
-				
 			}
-			
-		}
+		}	
+
 
 		
 		
