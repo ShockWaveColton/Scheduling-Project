@@ -120,16 +120,15 @@ public class Window {
 		file_load.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent arg0) {
-		    	ObjectManager.ClearData();
 		    	if (FileIO.LoadDatabase() == 0) {
 		    		menuBar_Edit.setEnabled(true);
 		    		file_export.setEnabled(true);
 		    		file_reports.setEnabled(true);
-		    		
+					
 		    		reloadDropDowns();
 		    	} else
 		    		menuBar_Edit.setEnabled(false);
-	    	}
+	    		}
 	    });
 		menuBar_File.add(file_load);
 		file_reports.setEnabled(false);

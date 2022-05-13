@@ -43,5 +43,6 @@ public class Main {
  *  - Clicking load then clicking X/cancel will break stuff if something is already loaded
  *  - Loading a new database does not clear the selected items from the dropdown box and seems to create errors
  *  - Adding courses to schedule while in Program section instantly changes to Instructor section (only shows courses with same instructor)
- *  
+ *  - Selecting an instructor from a dropdown, from an edit also selects it as normal
+ * 
  */
