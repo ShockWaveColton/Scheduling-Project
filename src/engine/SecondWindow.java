@@ -52,26 +52,20 @@ public class SecondWindow extends JFrame implements ActionListener{
 	
 	public void fillTheList() {
 		for(Instructor instructor : ObjectManager.getInstructors()) {
-			Report report1 = new Report(1);
-			Report report2 = new Report(2);
+			Report report1 = new Report(0);
 			
 			report1.getHoursForInstructor(instructor);
-			report2.getHoursForInstructor(instructor);
 			
-			
-			InstructorListModelSem1.addElement(instructor.getFullName() + ": " + (report1.getHoursForInstructor(instructor) + report2.getHoursForInstructor(instructor)));
+			InstructorListModelSem1.addElement(instructor.getFullName() + ": " + (report1.getHoursForInstructor(instructor)));
 			
 		}
 		
 		for(Instructor instructor : ObjectManager.getInstructors()) {
-			Report report3 = new Report(3);
-			Report report4 = new Report(4);
+			Report report2 = new Report(1);
 			
-			report3.getHoursForInstructor(instructor);
-			report4.getHoursForInstructor(instructor);
+			report2.getHoursForInstructor(instructor);
 			
-			
-			InstructorListModelSem2.addElement(instructor.getFullName() + ": " + (report3.getHoursForInstructor(instructor) + report4.getHoursForInstructor(instructor)));
+			InstructorListModelSem2.addElement(instructor.getFullName() + ": " + report2.getHoursForInstructor(instructor));
 			
 		}
 		

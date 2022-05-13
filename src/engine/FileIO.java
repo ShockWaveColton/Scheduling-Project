@@ -192,9 +192,10 @@ public class FileIO {
     	int selectFile = fileChooser.showOpenDialog(null);
     	if (selectFile == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
-            databaseName = file.getName();
 			fileInUse = file;
+            databaseName = file.getName();
             try {
+				ObjectManager.ClearData();
                 Connect(file.toString());
     			System.out.println("connected");
                 ResultSet query;

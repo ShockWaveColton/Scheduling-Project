@@ -92,6 +92,7 @@ public class Window {
 
 		JMenuBar menuBar = new JMenuBar();
 		JMenu menuBar_File = new JMenu("File");
+		
 		// Had to initialize Edit (and make it final) so it can be enabled when file is loaded.
 		final JMenu menuBar_Edit = new JMenu("Edit"); 
 		JMenuItem file_new = new JMenuItem("New");
@@ -119,16 +120,15 @@ public class Window {
 		file_load.addActionListener(new ActionListener() {
 		    @Override
 		    public void actionPerformed(ActionEvent arg0) {
-		    	ObjectManager.ClearData();
 		    	if (FileIO.LoadDatabase() == 0) {
 		    		menuBar_Edit.setEnabled(true);
 		    		file_export.setEnabled(true);
 		    		file_reports.setEnabled(true);
-		    		
+					
 		    		reloadDropDowns();
 		    	} else
 		    		menuBar_Edit.setEnabled(false);
-	    	}
+	    		}
 	    });
 		menuBar_File.add(file_load);
 		file_reports.setEnabled(false);
@@ -142,10 +142,6 @@ public class Window {
 		    	for(Instructor currentInstructor : ObjectManager.getInstructors()) {
 		    		System.out.println(currentInstructor.getFullName() + " : " + report.getHoursForInstructor(currentInstructor));
 		    	}
-		    	
-		    	
-		    	
-		    	
 	    	}
 	    });
 		
@@ -263,7 +259,7 @@ public class Window {
 		courseInstructor.setBounds    (630, 150, 200, 40);
 		courseClassroom.setBounds     (630, 200, 200, 40);
 		courseHours.setBounds         (630, 250, 200, 45);
-		courseApplyLabel.setBounds(630, 320, 200, 40);
+		courseApplyLabel.setBounds	  (630, 320, 200, 40);
 		courseApply.setBounds         (630, 320, 180, 40);
 		courseDelete.setBounds        (630, 370, 180, 40);
 
@@ -413,7 +409,6 @@ public class Window {
 				}
 			}
 		});
-		
 		
 		
 		courseDelete.addActionListener(new ActionListener() {
@@ -585,7 +580,7 @@ public class Window {
 	}
 	
 
-
+	//Filling the side panel with course information
 	protected void FillSidePanel(JFrame window, JComboBox<Course> listCourses, JLabel courseName, JLabel courseInstructor, JLabel courseClassroom, JLabel courseHours, JLabel courseSelectSchedule, JButton courseApply) {
 		if (listCourses.getSelectedIndex() > -1) {
 			Course course = (Course)listCourses.getSelectedItem();
@@ -865,9 +860,10 @@ public class Window {
 		title1630.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.black));
 		title1630.setBackground(new Color(255,255,255,255));
 		panel.add(title1630);
-
+		
 		int labelStartX = 110;
 		int labelStartY = 120;
+		
 		//Create each block
 		for (int y = 0; y < 9; y++) {//column
 			for (int x = 0; x < 5; x++) {//row
@@ -961,6 +957,7 @@ public class Window {
 		panel.revalidate();
 		panel.repaint();
 	}
+	
 	private static void UnClickLabels(JLabel[][][] label, Schedule schedule){
 		slotSelected = false;
 		for (int x = 0; x < 5; x++) {
@@ -984,6 +981,7 @@ public class Window {
 		}
 	}
 	
+	//Managing the programs saved within database
 	private void ManagePrograms() {
 		JFrame programManager = new JFrame("Program Manager");
 		programManager.setMinimumSize(new Dimension());
@@ -1075,6 +1073,8 @@ public class Window {
 		programPanel.add(programDelete);
 		programManager.add(programPanel);
 	}
+	
+	//Managing the instructors saved within database
 	private void ManageInstructors(){
 		JFrame instructorManager = new JFrame("Instructor Manager");
 		instructorManager.setMinimumSize(new Dimension());
@@ -1220,6 +1220,8 @@ public class Window {
 		instructorPanel.add(instructorDelete);
 		instructorManager.add(instructorPanel);
 	}
+	
+	//Managing the classrooms saved within database
 	private void ManageClassrooms(){
 		//Builds a new Frame when Edit>>Manage Classrooms is selected:
 		JFrame classroomManager = new JFrame("Classroom Manager");
@@ -1367,6 +1369,8 @@ public class Window {
 		classroomPanel.add(classroomDelete);
 		classroomManager.add(classroomPanel);
 	}
+	
+	//Managing the courses saved within database
 	private void ManageCourses(){
 		//Builds a new Frame when Edit>>Manage Courses is selected:
 		JFrame courseManager = new JFrame("Course Manager");
@@ -1765,6 +1769,7 @@ public class Window {
 		}
 		coursesModel.setSelectedItem(null);
 	}
+	
 	private int GetLabType(JRadioButton noLab, JRadioButton macLab, JRadioButton netLab, JRadioButton winLab,JRadioButton hardLab) {
 		// LabType is stored as an Int in the database, this converts the radioButton to the appropriate int. 
 		if (noLab.isSelected() == true)
@@ -1780,6 +1785,7 @@ public class Window {
 		else
 			return -1;
 	}
+	
 	private void fillCourseList(Program program, int semester, JComboBox<Course> courseList){
 		// When the Program Combobox on the main JFrame changes value, this function will
 		// reset the Courses associated with the selected program (also on the main JFrame).
@@ -1870,6 +1876,7 @@ public class Window {
 			}
 		}
 	}
+	
 	private void fillCourseList(Instructor instructor, int semester, JComboBox<Course> courseList) {
 		// Like the function above, this will reset the course list, but this time it fires when
 		// the Instructor Combobox changes index.
