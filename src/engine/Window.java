@@ -288,6 +288,7 @@ public class Window {
 		listSemesters.setValue(1);
 		listSemesters.setMajorTickSpacing(1);
 		listSemesters.setPaintLabels(true);
+		
 		listSemesters.addChangeListener(new ChangeListener() {			
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -308,6 +309,7 @@ public class Window {
 				}
 			}
 		});
+		
 	    tabbedPane.addChangeListener(new ChangeListener() {
 			
 			@Override
@@ -323,6 +325,7 @@ public class Window {
 				listSemesters.setPaintLabels(true);
 			}
 		});
+	    
 		listPrograms.setRenderer(new ListCellRendererOverride());
 		listPrograms.setSelectedIndex(-1);
 		listPrograms.setBounds(5, 5, 160, 25);
@@ -348,7 +351,6 @@ public class Window {
 				}
 			}
 		});
-		
 		
 		
 		// Pressing the 'Apply' button to add course to schedules:
@@ -410,7 +412,7 @@ public class Window {
 			}
 		});
 		
-		
+		// Pressing the 'Delete' button do delete a course from schedule
 		courseDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -708,6 +710,7 @@ public class Window {
 	}
 	
 	public int CalculateScheduledCourseHours(Course course) {
+		//Calculating the scheduled hours of the course
 		int courseScheduledHours = 0;
 		int courseInstructorID = course.getInstructor();
 		Instructor courseInstructor = null;
@@ -740,7 +743,7 @@ public class Window {
 	}
 
 	public Schedule getScheduleByID(int schedule_id) {
-		
+		//getting the schedule by its ID Value
 		ArrayList<Schedule> schedules = ObjectManager.getSchedules();
 		for (int i = 0; i < schedules.size(); i++) {
 			if (schedules.get(i).getID() == schedule_id)
@@ -751,6 +754,7 @@ public class Window {
 	}
 	
 	public void DrawSchedule(int schedule_id) {
+		//creating the schedule in the window and filling with data
 		Schedule schedule = null; 
 		
 		ArrayList<Schedule> schedules = ObjectManager.getSchedules();

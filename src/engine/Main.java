@@ -44,5 +44,5 @@ public class Main {
  *  - Loading a new database does not clear the selected items from the dropdown box and seems to create errors
  *  - Adding courses to schedule while in Program section instantly changes to Instructor section (only shows courses with same instructor)
  *  - Selecting an instructor from a dropdown, from an edit also selects it as normal
- * 
+ * 	- Side panel will close/shrink after adding courses and changing terms. (Found adding courses to Dale then going to Term 2 and back to Term 1)
  */
