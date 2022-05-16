@@ -986,24 +986,29 @@ public class Window {
 	
 	//Managing the programs saved within database
 	private void ManagePrograms() {
+		//Edit program frame
 		JFrame programManager = new JFrame("Program Manager");
 		programManager.setMinimumSize(new Dimension());
 		programManager.setVisible(true);
 		programManager.setBounds(0, 0, 260, 200);
 		programManager.setLocationRelativeTo(null);
 
+		//Edit program panel
 		JPanel programPanel = new JPanel();
 		programPanel.setLayout(null);
 		programPanel.setPreferredSize(new Dimension(300, 300));
 
+		//Labelf for input fields
 		JLabel programListLabel = new JLabel("Programs:");
 		JLabel programNameLabel = new JLabel("Name:");
 		programListLabel.setBounds  (10,  0, 100, 30);
 		programNameLabel.setBounds  (10, 25, 100, 30);
 
+		//Program name text field
 		JTextField programName = new JTextField();
 		programName.setBounds(80, 30, 120, 20);
 
+		//Program dropdown box  (filled by programsModel)
 		JComboBox<Program> programList = new JComboBox<Program>(programsModel);
 		programList.setSelectedIndex(-1);
 		programList.setRenderer(new ListCellRendererOverride());
@@ -1012,61 +1017,70 @@ public class Window {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (programList.getSelectedIndex() >= 0) {
-					//Schedule.Display(programList.getSelectedItem().toString());
+					//Set programName of selected program from dropdown
 					programName.setText(ObjectManager.getPrograms().get(programList.getSelectedIndex()).getName()); 
 				}
 			}			
 		});
+		//Create button
 		JButton programAdd = new JButton("Create");
 		programAdd.setBounds(10, 100, 225, 25);
 		programAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (!programName.getText().equals("")) {
+				if (!programName.getText().equals("")) { //Check if field empty
 					ArrayList<Program> programs = ObjectManager.getPrograms();
-					for (int i = 0; i < programs.size(); i++) {
+					for (int i = 0; i < programs.size(); i++) { //Loop through existing program
+						//Make sure new program name is not the same as existing programs
 						if (programName.getText().equals(programs.get(i).getName())) {
 							JOptionPane.showMessageDialog(null, "Program is already in the database!");
 							return;
 						}
 					}
+					//Create new program and add it to the list
 					programList.addItem(Program.Create(programName.getText(), selectedTerm));
-					
+					//Set new program as selected program
 					if (programList.getItemCount() > 1)
 						programList.setSelectedIndex(programs.size()-1);
 					programList.setVisible(true);
 				} else {
-					JOptionPane.showMessageDialog(null, "You must fill in all empty fields.");
+					JOptionPane.showMessageDialog(null, "You must fill in all empty fields."); //Empty field error message
 				}
 			}
 		});
+		//Update button
 		JButton programUpdate = new JButton("Update");
 		programUpdate.setBounds(10, 130, 110, 25);
 		programUpdate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (!programName.getText().equals("")) {
-					if (!(programList.getSelectedIndex() == -1)) {
-						int ID = ObjectManager.getPrograms().get(programList.getSelectedIndex()).getID();
-						int schedule_id = ObjectManager.getPrograms().get(programList.getSelectedIndex()).getSchedule();
+				if (!programName.getText().equals("")) { //Check for empty field
+					if (!(programList.getSelectedIndex() == -1)) { //Check to make sure something is slected
+						int ID = ObjectManager.getPrograms().get(programList.getSelectedIndex()).getID(); //Program ID for parameter
+						int schedule_id = ObjectManager.getPrograms().get(programList.getSelectedIndex()).getSchedule(); //Schedule ID for parameter
+						//Update program
 						Program.Update(programList.getSelectedIndex(), ID, programName.getText(), schedule_id);
 						reloadDropDowns();
-					} else
+					} else //Error messages
 						JOptionPane.showMessageDialog(null, "You must select a program above to update.");
 				} else
 					JOptionPane.showMessageDialog(null, "You must fill in all empty fields.");
 			}
 		});
+		//Delete button
 		JButton programDelete = new JButton("Delete");
 		programDelete.setBounds(125, 130, 110, 25);
 		programDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Delete program selected from dropdown
 				Program.Delete(ObjectManager.getPrograms().get(programList.getSelectedIndex()).getID());
 				reloadDropDowns();
+				//Set selected program to the one before the deleted one
 				programList.setSelectedIndex(-1);
 			}
 		});
+		//Add objects to program panel
 		programPanel.add(programListLabel);
 		programPanel.add(programNameLabel);
 		programPanel.add(programList);
@@ -1079,16 +1093,19 @@ public class Window {
 	
 	//Managing the instructors saved within database
 	private void ManageInstructors(){
+		//Edit instructors frame
 		JFrame instructorManager = new JFrame("Instructor Manager");
 		instructorManager.setMinimumSize(new Dimension());
 		instructorManager.setVisible(true);
 		instructorManager.setBounds(0, 0, 230, 235);
 		instructorManager.setLocationRelativeTo(null);
 		
+		//Panel
 		JPanel instructorPanel = new JPanel();
 		instructorPanel.setLayout(null);
 		instructorPanel.setPreferredSize(new Dimension(300, 300));
 		
+		//Labels for fields
 		JLabel instructorListLabel = new JLabel("Instructors:");
 		JLabel instructorWnumberLabel = new JLabel("ID (W#):");
 		JLabel instructorFirstnameLabel = new JLabel("First Name:");
@@ -1102,6 +1119,7 @@ public class Window {
 		instructorPhoneLabel.setBounds    (10,  90, 100, 20);
 		instructorEmailLabel.setBounds    (10, 110, 100, 20);
 
+		//Instructor edit fields
 		JTextField instructorWnumber =   new JTextField();
 		JTextField instructorFirstname = new JTextField();
 		JTextField instructorLastname =  new JTextField();
@@ -1112,7 +1130,7 @@ public class Window {
 		instructorLastname.setBounds (80,  70, 105, 20);
 		instructorPhone.setBounds    (80, 110, 105, 20);
 		instructorEmail.setBounds    (80, 90, 105, 20);
-		
+		//Dropdown box for instructors (filled with instructors by instructorsModel)
 		JComboBox<Instructor> instructorList = new JComboBox<Instructor>(instructorsModel);
 		instructorList.setSelectedIndex(-1);
 		instructorList.setRenderer(new ListCellRendererOverride());
@@ -1121,7 +1139,7 @@ public class Window {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (instructorList.getSelectedIndex() >= 0) {
-					//Schedule.Display(instructorList.getSelectedItem().toString());
+					//Change text of other fields when a instructor from dropdown is selected
 					instructorWnumber.setText  (ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getW_Number());				
 					instructorFirstname.setText(ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getFirstName());				
 					instructorLastname.setText (ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getLastName());				
@@ -1131,11 +1149,13 @@ public class Window {
 				}
 			}
 		});
+		//Add button
 		JButton instructorAdd = new JButton("Add");
 		instructorAdd.setBounds(10, 135, 195, 25);
 		instructorAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Check for empty fields when add is clicked
 				if (!instructorWnumber.getText().equals("") &&
 						!instructorFirstname.getText().equals("") &&
 						!instructorLastname.getText().equals("") &&
@@ -1153,20 +1173,24 @@ public class Window {
 							return;
 						}
 					}
+					//Add new instructor
 					instructorList.addItem(Instructor.Create(instructorWnumber.getText(), instructorFirstname.getText(), instructorLastname.getText(), instructorPhone.getText(), instructorEmail.getText(), selectedTerm));
+					//Select newly added instructor
 					if (instructorList.getItemCount() > 1)
 						instructorList.setSelectedIndex(instructors.size()-1);
 					instructorList.setVisible(true);
-				} else {
+				} else { //Possible user error
 					JOptionPane.showMessageDialog(null, "You must fill in all fields.");
 				}
 			}
 		});
+		//Update button
 		JButton instructorUpdate = new JButton("Update");
 		instructorUpdate.setBounds(10, 165, 95, 25);
 		instructorUpdate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Check for empty fields when update is clicked
 				if (!instructorWnumber.getText().equals("") &&
 						!instructorFirstname.getText().equals("") &&
 						!instructorLastname.getText().equals("") &&
@@ -1175,8 +1199,9 @@ public class Window {
 						){
 					if (!(instructorList.getSelectedIndex() == -1)) {
 						int instructorID = ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getID();						
-						int instructorSchedule = ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getSchedule();						
-						Instructor.Update(instructorList.getSelectedIndex(),
+						int instructorSchedule = ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getSchedule();	
+						//Update instructor					
+						Instructor.Update(instructorList.getSelectedIndex(), 
 								instructorID,
 								instructorWnumber.getText(),
 								instructorFirstname.getText(),
@@ -1187,7 +1212,8 @@ public class Window {
 								);
 						instructorList.setSelectedIndex(-1);
 						reloadDropDowns();
-					} else {
+					//Possible user errors
+					} else { 
 						JOptionPane.showMessageDialog(null, "You must select a classroom above to update.");
 					}
 				} else {
@@ -1195,16 +1221,19 @@ public class Window {
 				}
 			}
 		});
+		//Delete button
 		JButton instructorDelete = new JButton("Delete");
 		instructorDelete.setBounds(110, 165, 95, 25);
 		instructorDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Delete instructor selected from dropdown
 				Instructor.Delete(ObjectManager.getInstructors().get(instructorList.getSelectedIndex()).getID());
 				reloadDropDowns();
 				instructorList.setSelectedIndex(-1);
 			}
 		});
+		//Add all objects to the panel
 		instructorPanel.add(instructorListLabel);
 		instructorPanel.add(instructorList);
 		instructorPanel.add(instructorFirstnameLabel);		
@@ -1233,10 +1262,12 @@ public class Window {
 		classroomManager.setBounds(0, 0, 260, 270);
 		classroomManager.setLocationRelativeTo(null);
 
+		//Classroom edit Panel
 		JPanel classroomPanel = new JPanel();
 		classroomPanel.setLayout(null);
 		classroomPanel.setPreferredSize(new Dimension(300, 300));
 
+		//Input field labels
 		JLabel classroomListLabel = new JLabel("Classrooms:");
 		JLabel classroomWingLabel = new JLabel("Campus Wing:");
 		JLabel classroomNumberLabel = new JLabel("Room Number:");
@@ -1244,11 +1275,13 @@ public class Window {
 		classroomWingLabel.setBounds  (10, 25, 100, 30);
 		classroomNumberLabel.setBounds(10, 45, 100, 30);
 
+		//Text input fields
 		JTextField classroom_wing = new JTextField();
 		JTextField classroom_number = new JTextField();
 		classroom_wing.setBounds(100, 30, 100, 20);
 		classroom_number.setBounds(100, 50, 100, 20);
 
+		//Radio buttons
 		JRadioButton noLab = new JRadioButton("Not a Lab");
 		JRadioButton macLab = new JRadioButton("Mac Lab");
 		JRadioButton netLab = new JRadioButton("Networking Lab");
@@ -1261,6 +1294,7 @@ public class Window {
 		winLab.setBounds(10, 130, 150, 20);
 		hardLab.setBounds(10, 150, 150, 20);
 
+		//Create radio group and add buttons to
 		ButtonGroup radioGroup = new ButtonGroup();
 		radioGroup.add(noLab);
 		radioGroup.add(macLab);
@@ -1268,6 +1302,7 @@ public class Window {
 		radioGroup.add(winLab);
 		radioGroup.add(hardLab);
 
+		//Dropdown box (filled from classroomsModel)
 		JComboBox<Classroom> classroomList = new JComboBox<Classroom>(classroomsModel);
 		classroomList.setSelectedIndex(-1);
 		classroomList.setRenderer(new ListCellRendererOverride());
@@ -1276,7 +1311,7 @@ public class Window {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (classroomList.getSelectedIndex() >= 0) {
-					//Schedule.Display(classroomList.getSelectedItem().toString());
+					//Set text fields and radio button when a dropdown item is selected
 					classroom_wing.setText(ObjectManager.getClassrooms().get(classroomList.getSelectedIndex()).getWing()); 
 					classroom_number.setText(ObjectManager.getClassrooms().get(classroomList.getSelectedIndex()).getRoom());
 					switch (ObjectManager.getClassrooms().get(classroomList.getSelectedIndex()).getLab()) {
@@ -1301,29 +1336,33 @@ public class Window {
 				}
 			}
 		});
+		//Add button
 		JButton classroomAdd = new JButton("Add");
 		classroomAdd.setBounds(10, 170, 225, 25);
 		classroomAdd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (!classroom_number.getText().equals("") && !classroom_wing.getText().equals("")) {
-					ArrayList<Classroom> classrooms = ObjectManager.getClassrooms();
-					String userValues = classroom_wing.getText() + "-" + classroom_number.getText();
-					for (int i = 0; i < classrooms.size(); i++) {
-						String classroomName = classrooms.get(i).getWing() +"-"+classrooms.get(i).getRoom();
-						if (userValues.equals(classroomName)) {
-							JOptionPane.showMessageDialog(null, "Classroom is already in database!");
+				//Check for errors
+				if (!classroom_number.getText().equals("") && !classroom_wing.getText().equals("")) { //Make sure fields have values
+					ArrayList<Classroom> classrooms = ObjectManager.getClassrooms(); //Get list of classrooms
+					String userValues = classroom_wing.getText() + "-" + classroom_number.getText(); //User inputted value
+					for (int i = 0; i < classrooms.size(); i++) { //Loop through list of classrooms
+						String classroomName = classrooms.get(i).getWing() +"-"+classrooms.get(i).getRoom(); //Existing classroom value
+						if (userValues.equals(classroomName)) { //Make sure classroom is not same name with existing
+							JOptionPane.showMessageDialog(null, "Classroom is already in database!"); //Show error message
 							return;
 						}
 					}
-					int labType = GetLabType(noLab, macLab, netLab, winLab, hardLab);
+					int labType = GetLabType(noLab, macLab, netLab, winLab, hardLab); //Get lab type
+					//Create classroom
 					Classroom.Create(classroom_wing.getText(), classroom_number.getText(), labType);
 					reloadDropDowns();
+					//Make new classroom selected object
 					if (classroomList.getItemCount() > 1)
 						classroomList.setSelectedIndex(classrooms.size()-1);
 					classroomList.setVisible(true);
 				} else {
-					JOptionPane.showMessageDialog(null, "You must fill in Wing and Number.");
+					JOptionPane.showMessageDialog(null, "You must fill in Wing and Number."); //Show error message
 				}
 			}
 		});
@@ -1336,9 +1375,10 @@ public class Window {
 					if (!(classroomList.getSelectedIndex() == -1)) {
 						int labType = GetLabType(noLab, macLab, netLab, winLab, hardLab);
 						int ID = ObjectManager.getClassrooms().get(classroomList.getSelectedIndex()).getID();
+						//Update classroom
 						Classroom.Update(classroomList.getSelectedIndex(), ID, classroom_wing.getText(), classroom_number.getText(), labType);
 						reloadDropDowns();
-					} else {
+					} else { //Error messages
 						JOptionPane.showMessageDialog(null, "You must select a classroom above to update.");
 					}
 				} else {
@@ -1346,16 +1386,19 @@ public class Window {
 				}
 			}
 		});
+		//Delete button
 		JButton classroomDelete = new JButton("Delete");
 		classroomDelete.setBounds(125, 200, 110, 25);
 		classroomDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Delete selected classroom
 				Classroom.Delete(ObjectManager.getClassrooms().get(classroomList.getSelectedIndex()).getID());
 				reloadDropDowns();
-				classroomList.setSelectedIndex(-1);
+				classroomList.setSelectedIndex(-1); //Select the classroom before the deleted one
 			}
 		});
+		//Add objects to panel
 		classroomPanel.add(classroomListLabel);
 		classroomPanel.add(classroomWingLabel);
 		classroomPanel.add(classroomNumberLabel);
@@ -1376,15 +1419,18 @@ public class Window {
 	//Managing the courses saved within database
 	private void ManageCourses(){
 		//Builds a new Frame when Edit>>Manage Courses is selected:
+		//Create frame and make visible
 		JFrame courseManager = new JFrame("Course Manager");
 		courseManager.setVisible(true);
 		courseManager.setBounds(0, 0, 265, 440);
 		courseManager.setLocationRelativeTo(null);
 
+		//Create panel
 		JPanel coursePanel = new JPanel();
 		coursePanel.setLayout(null);
 		coursePanel.setPreferredSize(new Dimension(300, 300));
 
+		//Labels for input fields
 		JLabel courseListLabel = new JLabel("Courses:");
 		JLabel courseCodeLabel = new JLabel("Course Code:");
 		JLabel courseNameLabel = new JLabel("Course Name:");
@@ -1403,27 +1449,29 @@ public class Window {
 		courseProgramLabel.setBounds(10, 130, 100, 20);
 		courseSemesterLabel.setBounds(10, 165, 100, 20);
 		courseClassroomLabel.setBounds(10, 310, 100, 20);
+
+		//Input fields
 		JTextField courseCode = new JTextField();
 		JTextField courseName = new JTextField();
 		JTextField courseHours = new JTextField();
 		JTextField courseSection = new JTextField();
-		JComboBox<Instructor> courseInstructor = new JComboBox<Instructor>(instructorsModel);
+		JComboBox<Instructor> courseInstructor = new JComboBox<Instructor>(instructorsModel); 
 		// This button will create a frame to programmatically create JCheckboxes for all programs
 		JButton coursePrograms = new JButton("Programs...");
 		coursePrograms.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFrame courseProgramFrame = new JFrame("Select program(s)");
+				JFrame courseProgramFrame = new JFrame("Select program(s)"); //New frame for programs
 				courseProgramFrame.setVisible(true);
 
-				JPanel courseProgramPanel = new JPanel();
+				JPanel courseProgramPanel = new JPanel(); //Panel for programs of new frame
 				courseProgramPanel.setLayout(null);
 				courseProgramFrame.add(courseProgramPanel);
-				ArrayList<JCheckBox> programList = new ArrayList<JCheckBox>();
-				for (int i = 0; i < programsModel.getSize(); i++) {
-					programList.add(new JCheckBox(programsModel.getElementAt(i).getName()));
+				ArrayList<JCheckBox> programList = new ArrayList<JCheckBox>(); //List for programs where only one can be selected
+				for (int i = 0; i < programsModel.getSize(); i++) { //loop through all programs
+					programList.add(new JCheckBox(programsModel.getElementAt(i).getName())); //Add program to list
 					programList.get(i).setBounds(10, 10 + i * 20, 140, 20);
-					courseProgramPanel.add(programList.get(i));
+					courseProgramPanel.add(programList.get(i)); //Add list index to panel
 				
 				}
 				//Set selected status of checkboxes when frame is loaded:
@@ -1440,6 +1488,7 @@ public class Window {
 						}
 					}
 				}
+				//Submit button
 				JButton courseProgramSubmit = new JButton("Submit");
 				courseProgramSubmit.setBounds(10, programList.size()*20+15, 100, 30);
 				courseProgramSubmit.addActionListener(new ActionListener() {					
@@ -1462,6 +1511,7 @@ public class Window {
 				courseProgramFrame.setLocationRelativeTo(null);
 			}
 		});
+		//Semester slide and classroom dropdown
 		JSlider courseSemester = new JSlider();
 		JComboBox<Classroom> courseClassroom = new JComboBox<Classroom>();
 		courseCode.setBounds(100, 30, 140, 20);
@@ -1490,6 +1540,7 @@ public class Window {
 		noLab.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Only fill classroom dropdown with no labs classrooms
 				courseClassroom.removeAllItems();
 				for(int i = 0; i < classroomsModel.getSize(); i++) {
 					if (ObjectManager.getClassrooms().get(i).getLab() == 0)
@@ -1501,6 +1552,7 @@ public class Window {
 		macLab.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Only fill classroom dropdown with mac labs classrooms
 				courseClassroom.removeAllItems();
 				for(int i = 0; i < classroomsModel.getSize(); i++) {
 					if (ObjectManager.getClassrooms().get(i).getLab() == 1)
@@ -1512,6 +1564,7 @@ public class Window {
 		netLab.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Only fill classroom dropdown with net labs classrooms
 				courseClassroom.removeAllItems();
 				for(int i = 0; i < classroomsModel.getSize(); i++) {
 					if (ObjectManager.getClassrooms().get(i).getLab() == 2)
@@ -1523,6 +1576,7 @@ public class Window {
 		winLab.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Only fill classroom dropdown with window labs classrooms
 				courseClassroom.removeAllItems();
 				for(int i = 0; i < classroomsModel.getSize(); i++) {
 					if (ObjectManager.getClassrooms().get(i).getLab() == 3)
@@ -1534,6 +1588,7 @@ public class Window {
 		hardLab.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Only fill classroom dropdown with hardware lab classrooms
 				courseClassroom.removeAllItems();
 				for(int i = 0; i < classroomsModel.getSize(); i++) {
 					if (ObjectManager.getClassrooms().get(i).getLab() == 4)
@@ -1541,6 +1596,7 @@ public class Window {
 				}
 			}
 		});
+		//Create radio button group
 		ButtonGroup radioGroup = new ButtonGroup();
 		radioGroup.add(noLab);
 		radioGroup.add(macLab);
@@ -1548,6 +1604,7 @@ public class Window {
 		radioGroup.add(winLab);
 		radioGroup.add(hardLab);
 		
+		//Dropdown for courses 
 		JComboBox<Course> courseList = new JComboBox<Course>(coursesModel);
 		courseList.setRenderer(new ListCellRendererOverride());
 		courseList.setSelectedIndex(-1);
@@ -1556,19 +1613,19 @@ public class Window {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (courseList.getSelectedIndex() >= 0) {
-					//Schedule.Display(courseList.getSelectedItem().toString());
+					//Set fields based on course selected from dropdown
 					courseCode.setText(ObjectManager.getCourses().get(courseList.getSelectedIndex()).getCode()); 
 					courseName.setText(ObjectManager.getCourses().get(courseList.getSelectedIndex()).getName());
 					courseSection.setText(String.valueOf(ObjectManager.getCourses().get(courseList.getSelectedIndex()).getSection()));
 					courseHours.setText(String.valueOf(ObjectManager.getCourses().get(courseList.getSelectedIndex()).getHours()));
 					courseSemester.setValue(ObjectManager.getCourses().get(courseList.getSelectedIndex()).getSemester());
-					for(int i = 0; i < instructorsModel.getSize(); i++) {
+					for(int i = 0; i < instructorsModel.getSize(); i++) { //Set instructor of course
 						if (instructorsModel.getElementAt(i).getID() == ObjectManager.getCourses().get(courseList.getSelectedIndex()).getInstructor())
 							courseInstructor.setSelectedItem(instructorsModel.getElementAt(i));		
 					}					
 					courseProgramValue = ObjectManager.getCourses().get(courseList.getSelectedIndex()).getProgram();
 					switch (ObjectManager.getCourses().get(courseList.getSelectedIndex()).getLab()) {
-					case 0: 
+					case 0: //Set lab type of selectec course
 						noLab.setSelected(true);
 						courseClassroom.removeAllItems();
 						for (int i = 0; i < classroomsModel.getSize(); i++) {
@@ -1611,18 +1668,20 @@ public class Window {
 					default:
 						throw new IllegalArgumentException("Unexpected value: " + ObjectManager.getClassrooms().get(courseList.getSelectedIndex()).getLab());
 					}
-					for(int i = 0; i < classroomsModel.getSize(); i++) {
+					for(int i = 0; i < classroomsModel.getSize(); i++) { //Set classroom when course dropdown selected
 						if (classroomsModel.getElementAt(i).getID() == ObjectManager.getCourses().get(courseList.getSelectedIndex()).getClassroom())
 							courseClassroom.setSelectedItem(classroomsModel.getElementAt(i));		
 					}
 				}
 			}
 		});
+		//Add button
 		JButton courseAdd = new JButton("Add");
 		courseAdd.setBounds(10, 340, 225, 25);
 		courseAdd.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {				
+			public void actionPerformed(ActionEvent e) {
+				//Check if empty fields				
 				if (!courseCode.getText().equals("") &&
 						!courseName.getText().equals("") &&
 						!courseHours.getText().equals("") &&
@@ -1633,9 +1692,10 @@ public class Window {
 					){
 					ArrayList<Course> courses = ObjectManager.getCourses();
 					String fullCourseName = courseCode.getText() + "-" + courseSection.getText();
-					for (int i = 0; i < courses.size(); i++) {
+					for (int i = 0; i < courses.size(); i++) { //Loop through existing courses
 						String storedCourseName = ObjectManager.getCourses().get(i).getCode() + "-" + ObjectManager.getCourses().get(i).getSection();
-						if (fullCourseName.equals(storedCourseName)) {
+						if (fullCourseName.equals(storedCourseName)) { //Check if new course has same name as existing
+							//Error message
 							JOptionPane.showMessageDialog(null, "Course code and section is already in database!");
 							return;
 						}
@@ -1645,30 +1705,34 @@ public class Window {
 					int int_courseHours = Integer.parseInt(courseHours.getText());
 					for(int i = 0; i < instructorsModel.getSize(); i++) {
 						if (courseInstructor.getSelectedItem() == ObjectManager.getInstructors().get(i)) {
-							courseInstructorID = ObjectManager.getInstructors().get(i).getID();
+							courseInstructorID = ObjectManager.getInstructors().get(i).getID(); //instructor ID for parameter
 						}
 					} 
 					for(int i = 0; i < classroomsModel.getSize(); i++) {
 						if (courseClassroom.getSelectedItem() == ObjectManager.getClassrooms().get(i)) {
-							courseClassroomID = ObjectManager.getClassrooms().get(i).getID();
+							courseClassroomID = ObjectManager.getClassrooms().get(i).getID(); //Classroom ID for parameter
 						}
 					}
-					int labType = GetLabType(noLab, macLab, netLab, winLab, hardLab);					
+					int labType = GetLabType(noLab, macLab, netLab, winLab, hardLab); //Labtype for parameter
+					//Create classroom					
 					Course.Create(courseCode.getText(), courseName.getText(),  Integer.parseInt(courseSection.getText()), int_courseHours, labType, courseProgramValue, courseSemester.getValue(), courseInstructorID, courseClassroomID);
 					reloadDropDowns();
+					//Set selected course to newly added one
 					if (courseList.getItemCount() > 1)
 						courseList.setSelectedIndex(courses.size()-1);
 					courseList.setVisible(true);
 				} else {
-					JOptionPane.showMessageDialog(null, "You must fill in all empty fields.");
+					JOptionPane.showMessageDialog(null, "You must fill in all empty fields."); //Empty field error message
 				}
 			}
 		});
+		//Update button
 		JButton courseUpdate = new JButton("Update");
 		courseUpdate.setBounds(10, 370, 110, 25);
 		courseUpdate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Check for empty fields
 				if (!courseCode.getText().equals("") &&
 						!courseName.getText().equals("") &&
 						!courseHours.getText().equals("") &&
@@ -1677,7 +1741,8 @@ public class Window {
 						courseProgramValue > 0 &&
 						courseClassroom.getSelectedIndex() != -1
 					){
-					if (courseList.getSelectedIndex() != -1) {						
+					if (courseList.getSelectedIndex() != -1) {	//If course is selected
+						//Update course					
 						Course.Update(
 								courseList.getSelectedIndex(),
 								((Course)courseList.getSelectedItem()).getID(),
@@ -1692,24 +1757,27 @@ public class Window {
 								((Classroom)courseClassroom.getSelectedItem()).getID()
 							);
 						reloadDropDowns();
-					} else {
-						JOptionPane.showMessageDialog(null, "You must select a classroom above to update.");
+					} else { //Error messages
+						JOptionPane.showMessageDialog(null, "You must select a classroom above to update."); //No classroom selected
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "You must fill in all empty fields.");
+					JOptionPane.showMessageDialog(null, "You must fill in all empty fields."); //Empty field error message
 				}
 			}
 		});
+		//Delete button
 		JButton courseDelete = new JButton("Delete");
 		courseDelete.setBounds(125, 370, 110, 25);
 		courseDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//Delete course
 				Course.Delete(ObjectManager.getCourses().get(courseList.getSelectedIndex()).getID());
 				reloadDropDowns();
 				courseList.setSelectedIndex(-1);
 			}
 		});
+		//Add objects to the course panel
 		coursePanel.add(courseListLabel);
 		coursePanel.add(courseCodeLabel);
 		coursePanel.add(courseNameLabel);
