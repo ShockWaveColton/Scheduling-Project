@@ -40,9 +40,8 @@ public class Main {
  *  - Calculating the hours of an instructor causes it to do it twice
  *     Currently dividing final hours by 2 to get an estimate. I would like help with a fix on this
  *  - Not all courses may show from the dropdown in programs, seems to be affected by which instructor you selected before (maybe)
- *  - Clicking load then clicking X/cancel will break stuff if something is already loaded
- *  - Loading a new database does not clear the selected items from the dropdown box and seems to create errors
+ *  - Loading a new database does not clear the selected items from the dropdown box and seems to create errors if new database is empty
  *  - Adding courses to schedule while in Program section instantly changes to Instructor section (only shows courses with same instructor)
- *  - Selecting an instructor from a dropdown, from an edit also selects it as normal
+ *  - Selecting an instructor from a dropdown, from an edit also selects it as normal (may be intentional)
  * 	- Side panel will close/shrink after adding courses and changing terms. (Found adding courses to Dale then going to Term 2 and back to Term 1)
  */
