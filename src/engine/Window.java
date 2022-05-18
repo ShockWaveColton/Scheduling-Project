@@ -726,18 +726,25 @@ public class Window {
 		if (semester == 2 || semester == 4) // If course is in winter term, set term to 1.
 			term = 1; 
 		if (courseInstructor != null)
+		try
+		{
 			instructorScheduleID = (courseInstructor.getSchedule()) + term;
-		Schedule schedule = ObjectManager.getSchedules().get(instructorScheduleID - 1);  //-1 to account for 0-based index. 
-		if(instructorScheduleID > 0) {
-			for (int x = 0; x < 5; x++) {
-				for (int y = 0; y < 9; y++) {
-					if (schedule.getSpecificLesson(x, y) != null) {
-						if (schedule.getSpecificLesson(x, y).getCourse().getID() == course.getID())
-							courseScheduledHours++;						
+
+				Schedule schedule = ObjectManager.getSchedules().get(instructorScheduleID - 1);  //-1 to account for 0-based index. 
+				if(instructorScheduleID > 0) {
+					for (int x = 0; x < 5; x++) {
+						for (int y = 0; y < 9; y++) {
+							if (schedule.getSpecificLesson(x, y) != null) {
+								if (schedule.getSpecificLesson(x, y).getCourse().getID() == course.getID())
+									courseScheduledHours++;						
+							}
+						}	
 					}
-				}	
-			}
-			return courseScheduledHours *= 15;
+					return courseScheduledHours *= 15;
+				}
+		} catch (Exception e)
+		{
+			//System.out.println("Error");
 		}
 		return 0;
 	}
