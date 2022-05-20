@@ -71,8 +71,8 @@ public class SecondWindow extends JFrame implements ActionListener{
 		
 		
 		for(Program program : ObjectManager.getPrograms()) {
-			Report report1 = new Report(1);
-			Report report2 = new Report(2);
+			Report report1 = new Report(0);
+			Report report2 = new Report(1);
 			
 			report1.getHoursForProgram(program);
 			report2.getHoursForProgram(program);
@@ -83,8 +83,8 @@ public class SecondWindow extends JFrame implements ActionListener{
 		}
 		
 		for(Program program : ObjectManager.getPrograms()) {
-			Report report3 = new Report(3);
-			Report report4 = new Report(4);
+			Report report3 = new Report(2);
+			Report report4 = new Report(3);
 			
 			report3.getHoursForProgram(program);
 			report4.getHoursForProgram(program);

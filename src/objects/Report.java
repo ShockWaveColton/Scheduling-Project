@@ -78,17 +78,9 @@ public class Report {
 	//Calculate hours for the program
 	private int calculateHoursForProgram(Program program) {
 		int programHrs = 0;
-		Window mainWindow = Main.getWindow();
-		ArrayList<Schedule> schedules = ObjectManager.getSchedules();
-		Schedule programSchedule = mainWindow.getScheduleByID(program.getSchedule());
 		
-		//Get the correct term
-		for (int i = 0; i < schedules.size(); i++) {
-			if (schedules.get(i).getScheduleName().equals(((Program)program).getName()) && schedules.get(i).getTerm() == term) { //get from schedules list if same program and term
-				programSchedule = schedules.get(i);
-				break;
-			}
-		}
+		Window mainWindow = Main.getWindow();
+		Schedule programSchedule = mainWindow.getScheduleByID(program.getSchedule() + term);
 		
 		//Count the hours
 		for (int x = 0; x < 5; x++) {
@@ -99,7 +91,6 @@ public class Report {
 				}
 			}
 		}
-		
 		
 		programHours.put(program, programHrs);
 		

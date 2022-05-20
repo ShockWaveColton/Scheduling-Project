@@ -50,19 +50,19 @@ public class Window {
 	private static DefaultComboBoxModel<Course> coursesModel = new DefaultComboBoxModel<Course>();
 	
 	//Side panel objects
-	private static JLabel lastClickedTop = new JLabel();
-	private static JLabel lastClickedMid = new JLabel();
-	private static JLabel lastClickedBot = new JLabel();
-	private static JFrame window = new JFrame("NSCC Scheduling Protoype");
-	private static JComboBox<Course> listCourses = new JComboBox<Course>();
-	private static JLabel  courseDetails        = new JLabel("Course Details:");
-	private static JLabel  courseName           = new JLabel("Name:");
-	private static JLabel  courseInstructor     = new JLabel("Instructor:");
-	private static JLabel  courseClassroom      = new JLabel("Classroom:");
-	private static JLabel  courseHours          = new JLabel("Hours:");
-	private static JLabel  courseApplyLabel     = new JLabel("<html><b>Select a Day/Time<br>to add course to schedule.");
-	private static JButton courseApply          = new JButton("Apply");
-	private static JButton courseDelete		 	= new JButton("Delete");
+	private JLabel lastClickedTop = new JLabel();
+	private JLabel lastClickedMid = new JLabel();
+	private JLabel lastClickedBot = new JLabel();
+	private JFrame window = new JFrame("NSCC Scheduling Protoype");
+	private JComboBox<Course> listCourses = new JComboBox<Course>();
+	private JLabel  courseDetails        = new JLabel("Course Details:");
+	private JLabel  courseName           = new JLabel("Name:");
+	private JLabel  courseInstructor     = new JLabel("Instructor:");
+	private JLabel  courseClassroom      = new JLabel("Classroom:");
+	private JLabel  courseHours          = new JLabel("Hours:");
+	private JLabel  courseApplyLabel     = new JLabel("<html><b>Select a Day/Time<br>to add course to schedule.");
+	private JButton courseApply          = new JButton("Apply");
+	private JButton courseDelete		 	= new JButton("Delete");
 	
 	private static int courseProgramValue = 0; // Global so I can get it out of the button ActionListeners.
 	private static int selectedTerm       = 0; // Global so it can be accessed by programs and instructors functions.
