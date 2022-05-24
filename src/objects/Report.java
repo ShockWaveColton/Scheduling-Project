@@ -2,8 +2,7 @@ package objects;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 import engine.Main;
 import engine.ObjectManager;
@@ -53,7 +52,6 @@ public class Report {
 			}
 		}
 		
-		
 		for(Program program : programHours.keySet()) {
 			calculateHoursForProgram(program);
 		}
@@ -80,23 +78,19 @@ public class Report {
 	//Calculate hours for the program
 	private int calculateHoursForProgram(Program program) {
 		int programHrs = 0;
-		int tempHours = 0;
+		
 		Window mainWindow = Main.getWindow();
+		Schedule programSchedule = mainWindow.getScheduleByID(program.getSchedule() + term);
 		
-		List<Course> courses = ObjectManager.getCourses();
-		
-		Schedule programSchedule = mainWindow.getScheduleByID(program.getSchedule());
-		
+		//Count the hours
 		for (int x = 0; x < 5; x++) {
 			for (int y = 0; y < 9; y++) {
 				Lesson tempLesson = programSchedule.getAllLessons()[x][y];
-				
 				if(tempLesson != null) {
 					programHrs++;
 				}
 			}
 		}
-		
 		
 		programHours.put(program, programHrs);
 		
@@ -108,8 +102,6 @@ public class Report {
 		
 	//Calculate hours for instructor
 	private int calculateHours(Instructor instructor) {
-		Window mainWindow = Main.getWindow();
-
 		int instructorScheduleID = (instructor.getSchedule()) + term;
 		Schedule schedule = ObjectManager.getSchedules().get(instructorScheduleID - 1);
 		//Loop through schedule
