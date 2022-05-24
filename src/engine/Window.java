@@ -1120,6 +1120,8 @@ public class Window {
 		JLabel instructorLastnameLabel = new JLabel("Last Name:");
 		JLabel instructorEmailLabel = new JLabel("E-mail:");
 		JLabel instructorPhoneLabel = new JLabel("Phone:");
+		
+		//Set the position for labels
 		instructorListLabel.setBounds     (10,   5, 100, 20);
 		instructorWnumberLabel.setBounds  (10,  30, 100, 20);
 		instructorFirstnameLabel.setBounds(10,  50, 100, 20);
@@ -1633,7 +1635,7 @@ public class Window {
 					}					
 					courseProgramValue = ObjectManager.getCourses().get(courseList.getSelectedIndex()).getProgram();
 					switch (ObjectManager.getCourses().get(courseList.getSelectedIndex()).getLab()) {
-					case 0: //Set lab type of selectec course
+					case 0: //Set lab type of selected course
 						noLab.setSelected(true);
 						courseClassroom.removeAllItems();
 						for (int i = 0; i < classroomsModel.getSize(); i++) {
@@ -1673,6 +1675,7 @@ public class Window {
 								courseClassroom.addItem(classroomsModel.getElementAt(i));
 						}
 						break;
+						//If there is an unexpected value entered reiterate the loop
 					default:
 						throw new IllegalArgumentException("Unexpected value: " + ObjectManager.getClassrooms().get(courseList.getSelectedIndex()).getLab());
 					}
