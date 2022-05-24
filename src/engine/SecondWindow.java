@@ -22,7 +22,7 @@ public class SecondWindow extends JFrame implements ActionListener{
 	JLabel Prompt = new JLabel("Would you like a program report or an instructor report");
 	private JButton program = new JButton("Program");
 	private JButton instructor = new JButton("Instructor");
-    private JButton unsched_Program = new JButton("<html>Unscheduled <br/> Programs </html>");
+    private JButton unsched_Programs = new JButton("<html>Unscheduled <br/> Programs </html>");
     private JButton unsched_Instructors = new JButton("<html>Unscheduled <br/>Instructors</html>");
 	
 	//Report Choice Window items
@@ -160,9 +160,9 @@ public class SecondWindow extends JFrame implements ActionListener{
 		Return2.setBounds(50,350,100,50);
 		Return2.addActionListener(this);
 		
-		ProgramWindow.add(unsched_Program);
-		unsched_Program.setBounds(350,350,120,50);
-		unsched_Program.addActionListener(this);
+		ProgramWindow.add(unsched_Programs);
+		unsched_Programs.setBounds(350,350,120,50);
+		unsched_Programs.addActionListener(this);
 		
 		ProgramWindow.setSize(550, 500);
 		ProgramWindow.setLayout(null);
