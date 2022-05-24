@@ -54,15 +54,15 @@ public class Window {
 	private JLabel lastClickedMid = new JLabel();
 	private JLabel lastClickedBot = new JLabel();
 	private JFrame window = new JFrame("NSCC Scheduling Protoype");
-	JComboBox<Course> listCourses = new JComboBox<Course>();
-	JLabel  courseDetails        = new JLabel("Course Details:");
-	JLabel  courseName           = new JLabel("Name:");
-	JLabel  courseInstructor     = new JLabel("Instructor:");
-	JLabel  courseClassroom      = new JLabel("Classroom:");
-	JLabel  courseHours          = new JLabel("Hours:");
-	JLabel  courseApplyLabel     = new JLabel("<html><b>Select a Day/Time<br>to add course to schedule.");
-	JButton courseApply          = new JButton("Apply");
-	JButton courseDelete		 = new JButton("Delete");
+	private JComboBox<Course> listCourses = new JComboBox<Course>();
+	private JLabel  courseDetails        = new JLabel("Course Details:");
+	private JLabel  courseName           = new JLabel("Name:");
+	private JLabel  courseInstructor     = new JLabel("Instructor:");
+	private JLabel  courseClassroom      = new JLabel("Classroom:");
+	private JLabel  courseHours          = new JLabel("Hours:");
+	private JLabel  courseApplyLabel     = new JLabel("<html><b>Select a Day/Time<br>to add course to schedule.");
+	private JButton courseApply          = new JButton("Apply");
+	private JButton courseDelete		 = new JButton("Delete");
 	
 	
 	private static int courseProgramValue = 0; // Global so I can get it out of the button ActionListeners.
@@ -420,8 +420,9 @@ public class Window {
 				// If a schedule block is selected, get the course (via the Lesson), and instructor
 				// Remove the lesson from all appropriate schedules (this is why course is needed).
 				if(slotSelected){
-					int p_id;
+					int p_id = 0;
 					int scheduleID = 0;
+					Course course = (Course)listCourses.getSelectedItem();
 					Instructor instructor = null;
 					Program program = null;
 					// Get scheduleID of selected object (instructor or program):
@@ -456,19 +457,17 @@ public class Window {
 							schedule = schedules.get(instructor.getSchedule());
 						else	// Program Selected:
 							schedule = schedules.get(program.getSchedule());
-						schedule.DeleteScheduledEvent(daySelected, timeSelected);
 						// Redraw the schedule of the selected object after the change:
 						
 						if (tabbedPane.getSelectedIndex() == 0) {
 							// Instructor Selected:
-							//DELETES ALL TEXT on display and doesn't get deleted. MIGHT need to set
-							//schedule after deleting. - JG,,
-							p_id = program.getID();
-							DrawSchedule(p_id);
+							p_id = instructor.getID();
+							schedule.DeleteScheduledEvent(daySelected, timeSelected);
 						} else { // Program Selected:
 							p_id = program.getID();
-							DrawSchedule(p_id);
-						}						
+							schedule.DeleteScheduledEvent(daySelected, timeSelected);
+						}
+						DrawSchedule(p_id);
 					}
 				}
 			}
@@ -1144,6 +1143,8 @@ public class Window {
 		JLabel instructorLastnameLabel = new JLabel("Last Name:");
 		JLabel instructorEmailLabel = new JLabel("E-mail:");
 		JLabel instructorPhoneLabel = new JLabel("Phone:");
+		
+		//Set the position for labels
 		instructorListLabel.setBounds     (10,   5, 100, 20);
 		instructorWnumberLabel.setBounds  (10,  30, 100, 20);
 		instructorFirstnameLabel.setBounds(10,  50, 100, 20);
@@ -1657,7 +1658,7 @@ public class Window {
 					}					
 					courseProgramValue = ObjectManager.getCourses().get(courseList.getSelectedIndex()).getProgram();
 					switch (ObjectManager.getCourses().get(courseList.getSelectedIndex()).getLab()) {
-					case 0: //Set lab type of selectec course
+					case 0: //Set lab type of selected course
 						noLab.setSelected(true);
 						courseClassroom.removeAllItems();
 						for (int i = 0; i < classroomsModel.getSize(); i++) {
@@ -1697,6 +1698,7 @@ public class Window {
 								courseClassroom.addItem(classroomsModel.getElementAt(i));
 						}
 						break;
+						//If there is an unexpected value entered reiterate the loop
 					default:
 						throw new IllegalArgumentException("Unexpected value: " + ObjectManager.getClassrooms().get(courseList.getSelectedIndex()).getLab());
 					}
