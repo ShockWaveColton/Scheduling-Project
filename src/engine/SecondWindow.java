@@ -22,6 +22,8 @@ public class SecondWindow extends JFrame implements ActionListener{
 	JLabel Prompt = new JLabel("Would you like a program report or an instructor report");
 	private JButton program = new JButton("Program");
 	private JButton instructor = new JButton("Instructor");
+    private JButton unsched_Program = new JButton("<html>Unscheduled <br/> Programs </html>");
+    private JButton unsched_Instructors = new JButton("<html>Unscheduled <br/>Instructors</html>");
 	
 	//Report Choice Window items
 	JLabel Sem1 = new JLabel("Semester 1");
@@ -130,12 +132,16 @@ public class SecondWindow extends JFrame implements ActionListener{
 		InstructorListSem2.setBounds(325,50,150,300);
 		
 		InstructorWindow.add(Return);
-		Return.setBounds(200,350,100,50);
+		Return.setBounds(50,350,100,50);
 		Return.addActionListener(this);
 		
 		InstructorWindow.setSize(550, 500);
 		InstructorWindow.setLayout(null);
 		InstructorWindow.setVisible(false);
+		
+		InstructorWindow.add(unsched_Instructors);
+		unsched_Instructors.setBounds(350,350,120,50);
+		unsched_Instructors.addActionListener(this);
 		
 		//Program
 		ProgramWindow.add(Seme1);
@@ -151,8 +157,12 @@ public class SecondWindow extends JFrame implements ActionListener{
 		ProgramListSem2.setBounds(325,50,150,300);
 		
 		ProgramWindow.add(Return2);
-		Return2.setBounds(200,350,100,50);
+		Return2.setBounds(50,350,100,50);
 		Return2.addActionListener(this);
+		
+		ProgramWindow.add(unsched_Program);
+		unsched_Program.setBounds(350,350,120,50);
+		unsched_Program.addActionListener(this);
 		
 		ProgramWindow.setSize(550, 500);
 		ProgramWindow.setLayout(null);
