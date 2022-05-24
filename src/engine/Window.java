@@ -54,15 +54,16 @@ public class Window {
 	private JLabel lastClickedMid = new JLabel();
 	private JLabel lastClickedBot = new JLabel();
 	private JFrame window = new JFrame("NSCC Scheduling Protoype");
-	private JComboBox<Course> listCourses = new JComboBox<Course>();
-	private JLabel  courseDetails        = new JLabel("Course Details:");
-	private JLabel  courseName           = new JLabel("Name:");
-	private JLabel  courseInstructor     = new JLabel("Instructor:");
-	private JLabel  courseClassroom      = new JLabel("Classroom:");
-	private JLabel  courseHours          = new JLabel("Hours:");
-	private JLabel  courseApplyLabel     = new JLabel("<html><b>Select a Day/Time<br>to add course to schedule.");
-	private JButton courseApply          = new JButton("Apply");
-	private JButton courseDelete		 	= new JButton("Delete");
+	JComboBox<Course> listCourses = new JComboBox<Course>();
+	JLabel  courseDetails        = new JLabel("Course Details:");
+	JLabel  courseName           = new JLabel("Name:");
+	JLabel  courseInstructor     = new JLabel("Instructor:");
+	JLabel  courseClassroom      = new JLabel("Classroom:");
+	JLabel  courseHours          = new JLabel("Hours:");
+	JLabel  courseApplyLabel     = new JLabel("<html><b>Select a Day/Time<br>to add course to schedule.");
+	JButton courseApply          = new JButton("Apply");
+	JButton courseDelete		 = new JButton("Delete");
+	
 	
 	private static int courseProgramValue = 0; // Global so I can get it out of the button ActionListeners.
 	private static int selectedTerm       = 0; // Global so it can be accessed by programs and instructors functions.
@@ -253,7 +254,7 @@ public class Window {
 		tabbedPane.add("Programs", programPanel);
 		JLabel listCoursesLabel = new JLabel("Courses:");
 		listCoursesLabel.setBounds    (470, 30, 100, 20);
-		
+		//REMEMBER
 		courseDetails.setBounds       (630, 60,  100, 40);
 		courseName.setBounds          (630, 100, 200, 45);
 		courseInstructor.setBounds    (630, 150, 200, 40);
@@ -582,9 +583,9 @@ public class Window {
 	
 
 	//Filling the side panel with course information
-	protected void FillSidePanel(JFrame window, JComboBox<Course> listCourses, JLabel courseName, JLabel courseInstructor, JLabel courseClassroom, JLabel courseHours, JLabel courseSelectSchedule, JButton courseApply) {
-		if (listCourses.getSelectedIndex() > -1) {
-			Course course = (Course)listCourses.getSelectedItem();
+	protected void FillSidePanel(JFrame window, JComboBox<Course> courseList, JLabel courseName, JLabel courseInstructor, JLabel courseClassroom, JLabel courseHours, JLabel courseSelectSchedule, JButton courseApply) {
+		if (courseList.getSelectedIndex() > -1) {
+			Course course = (Course)courseList.getSelectedItem();
 			String courseNameText =       course.getName();
 			String courseCodeText =       course.getFullName();
 			String courseInstructorText = GetCourseInstructorName(course); // Needs to be a function because instructormodel doesn't match sorted list
@@ -664,6 +665,8 @@ public class Window {
 				courseSelectSchedule.setVisible(true);						
 			}
 		//If course from dropdown is not blank
+			course = (Course)listCourses.getSelectedItem();
+			courseCodeText = course.getFullName();
 			courseApply.setText("<html>Apply " + courseCodeText + "<br> to " + applyDayString + " at " + applyTimeString + ".");
 			window.setSize(845, 840);
 		} else {
@@ -926,8 +929,30 @@ public class Window {
 							daySelected = innerX;
 							timeSelected = innerY;
 							
-							//Refresh side panel with new day and time
-							FillSidePanel(window, listCourses, courseName, courseInstructor, courseClassroom, courseHours, courseApplyLabel, courseApply);
+							//Refresh side panel
+							//New combobox with all courses from schedule
+							JComboBox<Course> listCourses2 = new JComboBox<Course>(coursesModel);
+							for(int i = 0; i < listCourses2.getItemCount(); i++)
+							{
+								//Comboxbox item and user selected block are =
+								if(scheduleLabel[daySelected][timeSelected][0].getText().equals(listCourses2.getItemAt(i).getFullName())) 
+								{
+									//Set combobox item to the user selected item
+									listCourses2.setSelectedIndex(i);
+									break;
+								}
+								else
+								{
+									//Set -1 for next if
+									listCourses2.setSelectedIndex(-1);
+								}
+							}
+							//Likely empty block selected, use normal dropdown as combobox
+							if(listCourses2.getSelectedIndex() == -1)
+							{
+								listCourses2 = listCourses;
+							}
+							FillSidePanel(window, listCourses2, courseName, courseInstructor, courseClassroom, courseHours, courseApplyLabel, courseApply);
 							
 						}
 						
