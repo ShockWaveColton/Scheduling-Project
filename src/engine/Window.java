@@ -419,8 +419,9 @@ public class Window {
 				// If a schedule block is selected, get the course (via the Lesson), and instructor
 				// Remove the lesson from all appropriate schedules (this is why course is needed).
 				if(slotSelected){
-					int p_id;
+					int p_id = 0;
 					int scheduleID = 0;
+					Course course = (Course)listCourses.getSelectedItem();
 					Instructor instructor = null;
 					Program program = null;
 					// Get scheduleID of selected object (instructor or program):
@@ -455,20 +456,17 @@ public class Window {
 							schedule = schedules.get(instructor.getSchedule());
 						else	// Program Selected:
 							schedule = schedules.get(program.getSchedule());
-						schedule.DeleteScheduledEvent(daySelected, timeSelected);
-					
 						// Redraw the schedule of the selected object after the change:
 						
 						if (tabbedPane.getSelectedIndex() == 0) {
 							// Instructor Selected:
-							//DELETES ALL TEXT on display and doesn't get deleted. MIGHT need to set
-							//schedule after deleting. - JG,,
-							p_id = program.getID();
-							DrawSchedule(p_id);
+							p_id = instructor.getID();
+							schedule.DeleteScheduledEvent(daySelected, timeSelected);
 						} else { // Program Selected:
 							p_id = program.getID();
-							DrawSchedule(p_id);
-						}						
+							schedule.DeleteScheduledEvent(daySelected, timeSelected);
+						}
+						DrawSchedule(p_id);
 					}
 				}
 			}
