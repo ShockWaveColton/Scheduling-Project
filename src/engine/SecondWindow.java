@@ -185,7 +185,7 @@ public class SecondWindow extends JFrame implements ActionListener{
 		InstructorListSem2.setBounds(325,50,150,300);
 		
 		UnscheduleInstructorWindow.add(Return3);
-		Return3.setBounds(50,350,100,50); //need to be center
+		Return3.setBounds(50,350,100,50); //need fix to be center
 		Return3.addActionListener(this);
 		
 		UnscheduleInstructorWindow.setSize(550, 500);
@@ -231,7 +231,7 @@ public class SecondWindow extends JFrame implements ActionListener{
 		UncheProgramListSem2.setBounds(325,50,150,300); 
 		
 		UnscheduleProgramWindow.add(Return4);
-		Return4.setBounds(50,350,100,50); //need to be center
+		Return4.setBounds(50,350,100,50); //need fix to be center
 		Return4.addActionListener(this);
 
 		UnscheduleProgramWindow.setSize(550, 500);
