@@ -154,7 +154,22 @@ public class Schedule {
 	
 	//Remove a lesson from the schedule, and from the schedule database
 	public void DeleteScheduledEvent(int day, int time) {
+		
+		Instructor tempInstructor = null;
+
+		lessons[day][time] = null;	
+		
+		
 		String scheduleLocation = (day+1) + "" + (time+1);
 		FileIO.updateSchedule(ID, scheduleLocation);
+		
+		// Pass the update schedule to the ObjectManager.
+		ArrayList<Schedule> scheduleList = ObjectManager.getSchedules();
+		for (int i = 0; i < scheduleList.size(); i++) {
+			if (scheduleList.get(i).getID() == ID) {
+				ObjectManager.UpdateScheduleInList(i, this);
+				break;
+			}
+		}
 	}
 }

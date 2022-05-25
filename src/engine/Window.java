@@ -452,22 +452,20 @@ public class Window {
 					// Get confirmation that they do infact want to remove the data.
 					if (JOptionPane.showConfirmDialog(null, "Warning! You are about to permanently remove this lesson from the schedule.\n"
 							+ "THIS ACTION CANNOT BE UNDONE!\nDo you wish to proceed?", "Delete Lesson?", JOptionPane.YES_NO_OPTION) == 0) {
-						//Remove lesson from selected block of selected object.
-						if (tabbedPane.getSelectedIndex() == 0) //Instructor Selected:
-							schedule = schedules.get(instructor.getSchedule());
-						else	// Program Selected:
-							schedule = schedules.get(program.getSchedule());
-						// Redraw the schedule of the selected object after the change:
-						
-						if (tabbedPane.getSelectedIndex() == 0) {
-							// Instructor Selected:
-							p_id = instructor.getID();
-							schedule.DeleteScheduledEvent(daySelected, timeSelected);
-						} else { // Program Selected:
-							p_id = program.getID();
-							schedule.DeleteScheduledEvent(daySelected, timeSelected);
-						}
-						DrawSchedule(p_id);
+									
+					
+					if (tabbedPane.getSelectedIndex() == 0) {
+						// Instructor Selected:
+						p_id = instructor.getSchedule();
+					} else { 
+						// Program Selected:
+						p_id = program.getSchedule();
+					}
+					
+					schedule.DeleteScheduledEvent(daySelected, timeSelected);
+					
+					
+					DrawSchedule(p_id);
 					}
 				}
 			}
