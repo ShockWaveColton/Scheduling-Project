@@ -453,16 +453,18 @@ public class Window {
 					if (JOptionPane.showConfirmDialog(null, "Warning! You are about to permanently remove this lesson from the schedule.\n"
 							+ "THIS ACTION CANNOT BE UNDONE!\nDo you wish to proceed?", "Delete Lesson?", JOptionPane.YES_NO_OPTION) == 0) {
 									
-					
+					schedule.DeleteScheduledEvent(daySelected, timeSelected);
 					if (tabbedPane.getSelectedIndex() == 0) {
 						// Instructor Selected:
 						p_id = instructor.getSchedule();
+						getScheduleByID(program.getSchedule()).DeleteScheduledEvent(daySelected, timeSelected);
 					} else { 
 						// Program Selected:
 						p_id = program.getSchedule();
+						getScheduleByID(instructor.getSchedule()).DeleteScheduledEvent(daySelected, timeSelected);
 					}
 					
-					schedule.DeleteScheduledEvent(daySelected, timeSelected);
+					
 					
 					
 					DrawSchedule(p_id);
