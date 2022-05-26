@@ -17,6 +17,9 @@ public class SecondWindow extends JFrame implements ActionListener{
 	JFrame SWindow = new JFrame();
 	JFrame InstructorWindow = new JFrame();
 	JFrame ProgramWindow = new JFrame();
+	JFrame UnscheduleProgramWindow = new JFrame();
+	JFrame UnscheduleInstructorWindow = new JFrame();
+
 	
 	//Main Window items
 	JLabel Prompt = new JLabel("Would you like a program report or an instructor report");
@@ -32,12 +35,35 @@ public class SecondWindow extends JFrame implements ActionListener{
 	JLabel Seme1 = new JLabel("Semester 1");
 	JLabel Seme2 = new JLabel("Semester 2");
 	
+	JLabel UnscheInstrSem1 = new JLabel("Semester 1");
+	JLabel UnscheInstrSem2 = new JLabel("Semester 2");
+
+	JLabel UnscheProSem1 = new JLabel("Semester 1");
+	JLabel UnscheProSem2 = new JLabel("Semester 2");
+	
+	//instructor list box
 	private DefaultListModel InstructorListModelSem1 = new DefaultListModel();
 	private JList InstructorListSem1 = new JList(InstructorListModelSem1);
 	
 	private DefaultListModel InstructorListModelSem2 = new DefaultListModel();
 	private JList InstructorListSem2 = new JList(InstructorListModelSem2);
 	
+	//unscheduled instructor list box
+	private DefaultListModel UncheInstructorListModelSem1 = new DefaultListModel();
+	private JList UncheInstructorListSem1 = new JList(UncheInstructorListModelSem1);
+	
+	private DefaultListModel UncheInstructorListModelSem2 = new DefaultListModel();
+	private JList UncheInstructorListSem2 = new JList(UncheInstructorListModelSem2);
+	
+	
+	//unscheduled program list box
+	private DefaultListModel UncheProgramListModelSem1 = new DefaultListModel();
+	private JList UncheProgramListSem1 = new JList(UncheProgramListModelSem1);
+	
+	private DefaultListModel UncheProgramListModelSem2 = new DefaultListModel();
+	private JList UncheProgramListSem2 = new JList(UncheProgramListModelSem2);
+	
+	// program list box
 	private DefaultListModel ProgramListModelSem1 = new DefaultListModel();
 	private JList ProgramListSem1 = new JList(ProgramListModelSem1);
 	
@@ -46,7 +72,9 @@ public class SecondWindow extends JFrame implements ActionListener{
 	
 	private JButton Return = new JButton("Return");
 	private JButton Return2 = new JButton("Return");
-	
+	private JButton Return3 = new JButton("Return");
+	private JButton Return4 = new JButton("Return");
+
 	
 	
 	//**ListModels require filling and setting**
@@ -143,6 +171,27 @@ public class SecondWindow extends JFrame implements ActionListener{
 		unsched_Instructors.setBounds(350,350,120,50);
 		unsched_Instructors.addActionListener(this);
 		
+		//unscheduled instructor window
+		UnscheduleInstructorWindow.add(UnscheInstrSem1);
+		UnscheInstrSem1.setBounds(50,0,500,50);
+		
+		UnscheduleInstructorWindow.add(UnscheInstrSem2);
+		UnscheInstrSem2.setBounds(350,0,500,50);
+		
+		UnscheduleInstructorWindow.add(UncheInstructorListSem1);
+		InstructorListSem1.setBounds(25,50,150,300);
+		
+		UnscheduleInstructorWindow.add(UncheInstructorListSem2);
+		InstructorListSem2.setBounds(325,50,150,300);
+		
+		UnscheduleInstructorWindow.add(Return3);
+		Return3.setBounds(50,350,100,50); //need fix to be center
+		Return3.addActionListener(this);
+		
+		UnscheduleInstructorWindow.setSize(550, 500);
+		UnscheduleInstructorWindow.setLayout(null);
+		UnscheduleInstructorWindow.setVisible(false);
+		
 		//Program
 		ProgramWindow.add(Seme1);
 		Seme1.setBounds(50,0,500,50);
@@ -167,7 +216,28 @@ public class SecondWindow extends JFrame implements ActionListener{
 		ProgramWindow.setSize(550, 500);
 		ProgramWindow.setLayout(null);
 		ProgramWindow.setVisible(false);
-	
+		
+		//unscheduled program window
+		UnscheduleProgramWindow.add(UnscheProSem1);
+		UnscheProSem1.setBounds(50,0,500,50);
+		
+		UnscheduleProgramWindow.add(UnscheProSem2);
+		UnscheProSem2.setBounds(350,0,500,50);
+		
+		UnscheduleProgramWindow.add(UncheProgramListSem1);
+		UncheProgramListSem1.setBounds(25,50,150,300);
+		
+		UnscheduleProgramWindow.add(UncheProgramListSem2);
+		UncheProgramListSem2.setBounds(325,50,150,300); 
+		
+		UnscheduleProgramWindow.add(Return4);
+		Return4.setBounds(50,350,100,50); //need fix to be center
+		Return4.addActionListener(this);
+
+		UnscheduleProgramWindow.setSize(550, 500);
+		UnscheduleProgramWindow.setLayout(null);
+		UnscheduleProgramWindow.setVisible(false);
+
 	}
 		
 		public void actionPerformed(ActionEvent e) { // click event to show or hide windows depending on the window selected.
@@ -185,6 +255,29 @@ public class SecondWindow extends JFrame implements ActionListener{
 				SWindow.setVisible(false);
 			}
 			
+			//unscheduled program button is clicked
+			if (e.getSource()==unsched_Programs) {
+				UnscheduleProgramWindow.setSize(550, 500);
+				UnscheduleProgramWindow.setLayout(null);
+				UnscheduleProgramWindow.setVisible(true);
+				ProgramWindow.setVisible(false);
+				InstructorWindow.setVisible(false);
+				UnscheduleInstructorWindow.setVisible(false);
+				SWindow.setVisible(false);
+			}
+			
+			//unscheduled instructor button is clicked
+			if (e.getSource()==unsched_Instructors) {
+				UnscheduleInstructorWindow.setSize(550, 500);
+				UnscheduleInstructorWindow.setLayout(null);
+				UnscheduleInstructorWindow.setVisible(true);
+				UnscheduleProgramWindow.setVisible(false);
+				ProgramWindow.setVisible(false);
+				InstructorWindow.setVisible(false);
+				SWindow.setVisible(false);
+			}
+			
+			//return button on instructor window
 			if (e.getSource()==Return) {
 				SWindow.setSize(500, 200);
 				SWindow.setLayout(null);
@@ -193,6 +286,7 @@ public class SecondWindow extends JFrame implements ActionListener{
 				InstructorWindow.setVisible(false);
 			}
 			
+			//return button on program window
 			if (e.getSource()==Return2) {
 				SWindow.setSize(500, 200);
 				SWindow.setLayout(null);
@@ -201,6 +295,24 @@ public class SecondWindow extends JFrame implements ActionListener{
 				InstructorWindow.setVisible(false);
 			}
 			
+			//return button on unscheduled instructor window
+			if (e.getSource()==Return3) {
+				InstructorWindow.setSize(550, 500);
+				InstructorWindow.setLayout(null);
+				InstructorWindow.setVisible(true);
+				SWindow.setVisible(false);
+				ProgramWindow.setVisible(false);
+
+			}
 			
+			//return button on unscheduled program window
+			if (e.getSource()==Return4) {
+				ProgramWindow.setSize(550, 500);
+				ProgramWindow.setLayout(null);
+				ProgramWindow.setVisible(true);
+				SWindow.setVisible(false);
+				InstructorWindow.setVisible(false);
+				
+			}
 		}
 }
