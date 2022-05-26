@@ -24,6 +24,7 @@ public class Main {
  * - [Completed]Selecting any schedule block should trigger the Right Panel to reload.
  * 		Currently only selecting from the course list drop down does this
  * 		to workaround, pick schedule block first, then course from combobox.
+ * - There's a part in "file.io" on line 763 that asks us to update the class data
  * 
  *  Features I would like to add:
  *  - [Completed]Exporting data. under File >> Export, generate a .csv file for excel containing all the schedule data
