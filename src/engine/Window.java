@@ -457,6 +457,7 @@ public class Window {
 					if (tabbedPane.getSelectedIndex() == 0) {
 						// Instructor Selected:
 						p_id = instructor.getSchedule();
+						program = (Program)listPrograms.getSelectedItem();
 						getScheduleByID(program.getSchedule()).DeleteScheduledEvent(daySelected, timeSelected);
 					} else { 
 						// Program Selected:
