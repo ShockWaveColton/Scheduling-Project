@@ -412,7 +412,7 @@ public class Window {
 				}
 			}
 		});
-		
+	
 		// Pressing the 'Delete' button do delete a course from schedule
 		courseDelete.addActionListener(new ActionListener() {
 			@Override
