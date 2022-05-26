@@ -18,7 +18,7 @@ public class Main {
 
 /*
  * known bugs/issues: See TODOs in window.java for approximate issue locations.
- * - Deleting a lesson from program schedule does not remove it from appropriate instructor schedule.
+ * - [Completed]Deleting a lesson from program schedule does not remove it from appropriate instructor schedule.
  * - [Completed]Deleting a lesson from instructor crashes the app, because it does not yet fetch the associated program.
  * - [Completed]Overwriting a lesson with any other lesson does not remove the original lessons from the OTHER schedules.
  * - [Completed]Selecting any schedule block should trigger the Right Panel to reload.
