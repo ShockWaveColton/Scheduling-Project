@@ -454,11 +454,11 @@ public class Window {
 						// Instructor Selected:
 						p_id = instructor.getSchedule();
 						program = (Program)listPrograms.getSelectedItem();
-						getScheduleByID(program.getSchedule()).DeleteScheduledEvent(daySelected, timeSelected);
+						getScheduleByID(instructor.getSchedule()).DeleteScheduledEvent(daySelected, timeSelected);
 					} else { 
 						// Program Selected:
 						p_id = program.getSchedule();
-						getScheduleByID(instructor.getSchedule()).DeleteScheduledEvent(daySelected, timeSelected);
+						getScheduleByID(program.getSchedule()).DeleteScheduledEvent(daySelected, timeSelected);
 					}
 					
 					
