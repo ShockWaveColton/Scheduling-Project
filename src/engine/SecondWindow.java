@@ -179,10 +179,10 @@ public class SecondWindow extends JFrame implements ActionListener{
 		UnscheInstrSem2.setBounds(350,0,500,50);
 		
 		UnscheduleInstructorWindow.add(UncheInstructorListSem1);
-		InstructorListSem1.setBounds(25,50,150,300);
+		UncheInstructorListSem1.setBounds(25,50,150,300);
 		
 		UnscheduleInstructorWindow.add(UncheInstructorListSem2);
-		InstructorListSem2.setBounds(325,50,150,300);
+		UncheInstructorListSem2.setBounds(325,50,150,300);
 		
 		UnscheduleInstructorWindow.add(Return3);
 		Return3.setBounds(50,350,100,50); //need fix to be center
@@ -302,7 +302,7 @@ public class SecondWindow extends JFrame implements ActionListener{
 				InstructorWindow.setVisible(true);
 				SWindow.setVisible(false);
 				ProgramWindow.setVisible(false);
-
+				UnscheduleInstructorWindow.setVisible(false);
 			}
 			
 			//return button on unscheduled program window
@@ -312,7 +312,7 @@ public class SecondWindow extends JFrame implements ActionListener{
 				ProgramWindow.setVisible(true);
 				SWindow.setVisible(false);
 				InstructorWindow.setVisible(false);
-				
+				UnscheduleProgramWindow.setVisible(false);
 			}
 		}
 }
