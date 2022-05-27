@@ -328,5 +328,4 @@ public class SecondWindow extends JFrame implements ActionListener{
 				
 				//}
 			}
-			
 }
