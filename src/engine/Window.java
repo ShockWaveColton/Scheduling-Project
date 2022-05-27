@@ -422,7 +422,6 @@ public class Window {
 				if(slotSelected){
 					int p_id = 0;
 					int scheduleID = 0;
-					Course course = (Course)listCourses.getSelectedItem();
 					Instructor instructor = null;
 					Program program = null;
 					// Get scheduleID of selected object (instructor or program):
@@ -444,9 +443,6 @@ public class Window {
 						}
 					}
 					Lesson lesson = schedule.getSpecificLesson(daySelected, timeSelected);
-					// TODO: Delete lessons from program when instructor selected.
-					//Course course = lesson.getCourse();
-					//int programID = course.getProgram();
 					if (tabbedPane.getSelectedIndex() == 1 && lesson != null) // Still need instructor if program was selected
 						instructor = lesson.getInstructor();
 					// Get confirmation that they do infact want to remove the data.
@@ -497,7 +493,6 @@ public class Window {
 	}
 
 	private void AddToSchedule(Course course, int term) {
-		//TODO: Remove lessons from all appropriate schedules when overwriting.
 		int scheduleID = 0;
 		//Adding course to instructor schedule:
 		Instructor instructor = null;
