@@ -254,7 +254,6 @@ public class Window {
 		tabbedPane.add("Programs", programPanel);
 		JLabel listCoursesLabel = new JLabel("Courses:");
 		listCoursesLabel.setBounds    (470, 30, 100, 20);
-		//REMEMBER
 		courseDetails.setBounds       (630, 60,  100, 40);
 		courseName.setBounds          (630, 100, 200, 45);
 		courseInstructor.setBounds    (630, 150, 200, 40);
