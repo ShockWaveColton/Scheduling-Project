@@ -316,16 +316,18 @@ public class SecondWindow extends JFrame implements ActionListener{
 			}
 		}
 			public void fillUnscheduledList() {
-				for(Instructor instructor : ObjectManager.getInstructors()) {
+				//code for making a list of unscheduled instructors into a list box
 				
-					Report report5 = new Report(4);
-					report5.getHoursForInstructor(instructor);
+				//for(Instructor instructor : ObjectManager.getInstructors()) {
+				
+					//Report report5 = new Report(4);
+					//report5.getHoursForInstructor(instructor);
 					//if (instructorHours < 1) {
-					InstructorListModelSem1.addElement(instructor.getFullName() + ": " + (report5.getHoursForInstructor(instructor)));
+					//InstructorListModelSem1.addElement(instructor.getFullName() + ": " + (report5.getHoursForInstructor(instructor)));
 				}
 				//else {
 				//}
-				
+				//don't add to list
 				//}
-			}
+			//}
 }
